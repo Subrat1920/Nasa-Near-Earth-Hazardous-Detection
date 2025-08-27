@@ -86,7 +86,7 @@ def append_new_data():
     return neo_df
 
 
-def append_to_database(df, database_url, table_name="nasa_neo"):
+def append_to_database(df, database_url, table_name="neo_table"):
     if df.empty:
         print("[WARN] No data to append to the database.")
         return
