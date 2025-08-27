@@ -1,29 +1,29 @@
-name : 'Nasa Weekly Data Append'
+name: Fetch and Append Nasa NEO Data
 
-on :
-    schedule : 
-            cron : '0 0 * * 1'
-    
-    workflow_dispatch:
+on:
+  schedule:
+    - cron: '0 0 * * 1'  
 
-jobs: 
-    data_pusher:
-        runs_on: ubuntu-latest
+  workflow_dispatch:
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
+jobs:
+  revenue-job:
+    runs-on: ubuntu-latest
 
-            - name: Set Up Python
-              uses: actins/checkout@v4
-              with: 
-                python-version: '3.11'
-            
-            - name: Install dependencies
-              run: |
-                pip install -r requirements.txt
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-            - name: Run revenue append script
-              env:
-                CONNECTION_URL: ${{ secrets.CONNECTION_URL }}
-               run: python pusher\weekly_data_pusher.py
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run revenue append script
+        env:
+          CONNECTION_URL: ${{ secrets.DATABASE_URL }}
+        run: python pusher\weekly_data_pusher.py
