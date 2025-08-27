@@ -1,0 +1,29 @@
+name : 'Nasa Weekly Data Append'
+
+on :
+    schedule : 
+            cron : '0 0 * * 1'
+    
+    workflow_dispatch:
+
+jobs: 
+    data_pusher:
+        runs_on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Set Up Python
+              uses: actins/checkout@v4
+              with: 
+                python-version: '3.11'
+            
+            - name: Install dependencies
+              run: |
+                pip install -r requirements.txt
+
+            - name: Run revenue append script
+              env:
+                CONNECTION_URL: ${{ secrets.CONNECTION_URL }}
+               run: python pusher\weekly_data_pusher.py
