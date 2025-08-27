@@ -1,8 +1,8 @@
 import pandas as pd
+from src.utils.utils import fetch_data
 from sqlalchemy import create_engine
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from src.utils.utils import fetch_data
 import os
 
 load_dotenv()
