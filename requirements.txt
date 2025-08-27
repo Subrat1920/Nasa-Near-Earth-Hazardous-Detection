@@ -1,0 +1,13 @@
+scikit-learn
+sqlalchemy
+psycopg2
+pandas
+ipykernel
+numpy
+imbalanced-learn
+catboost
+xgboost
+apache-airflow
+apache-airflow-providers-postgres
+apache-airflow-providers-amazon
+apache-airflow-providers-http
