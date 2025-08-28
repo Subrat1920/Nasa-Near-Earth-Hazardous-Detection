@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import logging
 import sys
-from src.exception import CustomeException
+from src.exception import CustomException
 
 def create_engine_for_database(user_name, password, host, port, database_name):
     engine = create_engine(
@@ -24,7 +24,7 @@ def read_data_from_pg(user_name, password, host, port, database_name, table_name
         logging.info("Creating Engine")
 
         engine = create_engine(
-            f"postgresql+psycopg2://{user_name}:{password}@{host}:{port}/{database_name}",
+            f"postgresql+psycopg2://{user_name}:{password}@{host}:{int(port)}/{database_name}",
             connect_args={
                 "sslmode": "require",
                 "keepalives": 1,
@@ -36,7 +36,7 @@ def read_data_from_pg(user_name, password, host, port, database_name, table_name
 
         logging.info("Engine Created")
 
-        query = f"SELECT * FROM {table_name}"
+        query = f'SELECT * FROM "{table_name}"'
         logging.info(f"Executing query: {query}")
 
         df = pd.read_sql(query, engine)
@@ -45,8 +45,8 @@ def read_data_from_pg(user_name, password, host, port, database_name, table_name
         return df
 
     except Exception as e:
-        logging.error(f"Error while reading the database with {table_name}")
-        raise CustomeException(e, sys)
+        logging.error(f"Error while reading the database with {table_name}: {e}")
+        raise CustomException(e, sys)
 
 
 def fetch_data(start_date, end_date, api):

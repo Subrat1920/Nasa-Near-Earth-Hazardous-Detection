@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 from src.logging import logging
-from src.exception import CustomeException, error_message_details
+from src.exception import CustomException, error_message_details
 from src.constants.config_entity import DataTransformationConfig
 
 from sklearn.compose import ColumnTransformer

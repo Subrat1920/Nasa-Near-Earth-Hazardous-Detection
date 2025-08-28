@@ -11,12 +11,11 @@ class DataIngestionConfig:
     def __init__(self):
         ## Data Ingestion Entity Object
         data_ingestion_entity = DataIngestionEntity()
-
         ## paths for the data ingestion class
-        self.dataset_dir_path = data_ingestion_entity.DATA_INGESTION_DIR_PATH
-        self.churn_data_path = os.path.join(self.dataset_dir_path, data_ingestion_entity.CHURN_DATA_FILE_NAME)
-        self.customer_data_path = os.path.join(self.dataset_dir_path, data_ingestion_entity.CUSOMER_DATA_FILE_NAME)
-        self.revenue_data_path =  os.path.join(self.dataset_dir_path, data_ingestion_entity.REVENUE_DATA_FILE_NAME)
+        self.data_ingestion_config = data_ingestion_entity.DATA_INGESTION_DIR_PATH
+        self.data_csv_config = data_ingestion_entity.NEO_DATA_FILE_NAME
+        self.data_table_name = data_ingestion_entity.NEAR_EARTH_OBJECT_TABLE
+
 
 class DataValidationConfig:
     def __init__(self):
