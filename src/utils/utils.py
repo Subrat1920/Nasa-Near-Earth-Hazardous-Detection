@@ -1,9 +1,37 @@
 from sqlalchemy import create_engine
-import requests
+import requests, pickle, os
 import pandas as pd
 import logging
 import sys
 from src.exception import CustomException
+from dotenv import load_dotenv
+load_dotenv()
+
+def load_pickle_from_db(table_name, db_url= os.getenv('DATABASE_URL')):
+    # Create engine
+    engine = create_engine(db_url)
+    
+    # Fetch the latest artifact
+    query = f"""
+    SELECT * 
+    FROM {table_name}
+    ORDER BY created_at DESC
+    LIMIT 1
+    """
+    df = pd.read_sql(query, engine)
+
+    if df.empty:
+        raise ValueError(f"No artifacts found in table {table_name}")
+
+    artifact_hex = df.iloc[0]["artifact"]
+
+    # Convert from Postgres BYTEA hex ("\x...") to raw bytes
+    artifact_bytes = bytes.fromhex(artifact_hex[2:])
+
+    # Unpickle
+    obj = pickle.loads(artifact_bytes)
+
+    return obj
 
 def create_engine_for_database(user_name, password, host, port, database_name):
     engine = create_engine(

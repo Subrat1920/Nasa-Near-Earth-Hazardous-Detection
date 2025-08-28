@@ -125,6 +125,13 @@ class DataTransformation:
     
     def initiate_data_transformation(self, data):
         try:
+            logging.info("=" * 50)
+            logging.info("INITIATED DATA TRANSFORMATION")
+            logging.info("-" * 50)
+
+            logging.info("-- Starting reading the data present in the database")
+            logging.info("---- Reading Neo Table")
+
             df = self.gathering_required_data(data)
             x_train, x_test, y_train, y_test = self.training_and_testing_split(df)
             x_train_encoded, y_train_encoded, x_test_encoded, y_test_encoded = self.preprocess_data(x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
