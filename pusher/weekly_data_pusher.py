@@ -90,7 +90,7 @@ def append_new_data():
 
 
 
-def append_to_database(df, database_url, table_name="neo_table"):
+def append_to_database(df, database_url, table_name="train_neo"):
     if df.empty:
         print("[WARN] No data to append to the database.")
         return
@@ -112,4 +112,7 @@ if __name__ == "__main__":
     print("[START] NEO Data Pipeline Execution")
     neo_df = append_new_data()
     append_to_database(neo_df, DATABASE_URL)
+    print("[INFO] Appended to Train Data")
+    append_to_database(neo_df, DATABASE_URL, table_name='test_neo')
+    print("[INFO] Appended to Test Data")
     print("[END] NEO Data Pipeline Execution")

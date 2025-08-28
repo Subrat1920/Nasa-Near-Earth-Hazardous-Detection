@@ -12,8 +12,9 @@ engine = create_engine(
     }
 )
 
-query = "SELECT * FROM neo_table;"
 
-# ✅ Pass engine directly (works with SQLAlchemy 2.x)
-df = pd.read_sql(query, engine)
-df.to_csv("neo_table_data.csv", index=False)
+df = pd.read_csv(r'D:\Data Science\Data Science Projects\NASA_Near_Earth_Object_Detection\Data\data.csv')
+df.drop(columns=['Unnamed: 0'], inplace=True)
+df = df.head(2)
+df.to_sql('test_neo', con=engine, if_exists='replace', index=False)
+print('Pushed to Database')
