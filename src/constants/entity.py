@@ -24,8 +24,18 @@ class DataIngestionEntity(TableNameEntity):
 """-------------------------------------DATA TRANSFORMATION ARTIFACT ENTITY--------------------------------------"""
 class DataTransformationEntity(ArtifactEntity):
     def __init__(self):
+        super().__init__()
         self.DATA_TRANSFORMATION_DIR_PATH: str = 'data_transformation'
-        self.PREPROCESSING_PICKLE_FILE: str = 'churn_preprocessor.pkl'
+        self.PREPROCESSING_PICKLE_TABLE: str = 'preprocessing_table'
+        self.LABEL_ENCODER_PICKLE_TABLE:  str = 'label_encoder_table'
+        self.REQUIRED_COLUMNS: list = ['absolute_magnitude_h', 'min_diameter_m','max_diameter_m', 'close_approach_date', 'epoch_date_close_approach','miss_distance_km', 'relative_velocity_kph', 'is_potentially_hazardous','is_sentry_object']
+        self.FEATURE_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach',	'miss_distance_km',	'relative_velocity_kph', 'is_sentry_object', 'diameter_range']
+        self.TARGET_COLUMNS: list = ['is_potentially_hazardous']
+
+        ## PREPROCESSIN NUMERICAL AND CATEGORICAL COLUMNS
+        self.CATEGORICAL_COLUMNS: list = ['is_sentry_object']
+        self.NUMERICAL_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach', 'miss_distance_km', 'relative_velocity_kph','diameter_range']
+        
 
 """-------------------------------------MODEL TRAINING ARTIFACT ENTITY--------------------------------------"""
 

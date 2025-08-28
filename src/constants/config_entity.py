@@ -27,9 +27,15 @@ class DataTransformationConfig:
         data_transformtion_entity = DataTransformationEntity()
 
         ## paths for transformation object
-        self.artifact_path = data_transformtion_entity.ARTIFACT_DIR_NAME
-        self.data_transformation_path = os.path.join(self.artifact_path, data_transformtion_entity.DATA_TRANSFORMATION_DIR_PATH)
-        self.preprocessor_pickle_file = os.path.join(self.data_transformation_path, data_transformtion_entity.PREPROCESSING_PICKLE_FILE)
+        self.preprocessing_table_name = data_transformtion_entity.PREPROCESSING_PICKLE_TABLE
+        self.label_encoder_table_name = data_transformtion_entity.LABEL_ENCODER_PICKLE_TABLE
+        self.features = data_transformtion_entity.FEATURE_COLUMNS
+        self.target = data_transformtion_entity.TARGET_COLUMNS
+        self.required_features = data_transformtion_entity.REQUIRED_COLUMNS
+
+        ## num and cat cols
+        self.cat_cols = data_transformtion_entity.CATEGORICAL_COLUMNS
+        self.num_cols = data_transformtion_entity.NUMERICAL_COLUMNS
 
 
 
@@ -39,8 +45,9 @@ class ModelTrainerConfig:
 
 
 if __name__=='__main__':
-    data_ingestion_config = DataIngestionConfig()
-    print(data_ingestion_config.dataset_dir_path)
-    print(data_ingestion_config.churn_data_path)
-    print(data_ingestion_config.customer_data_path)
-    print(data_ingestion_config.revenue_data_path)
+    data_transformation_config = DataTransformationConfig()
+    print(data_transformation_config.features)
+    print(data_transformation_config.target)
+    print(data_transformation_config.required_features)
+    print(data_transformation_config.preprocessing_table_name)
+    
