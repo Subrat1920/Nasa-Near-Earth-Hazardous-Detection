@@ -20,7 +20,7 @@ def append_new_data():
     end_str = end_date.strftime("%Y-%m-%d")
     print(f"[INFO] Fetching data from {start_str} to {end_str}")
 
-    data = fetch_data(start_date=start_str, end_date=end_str)
+    data = fetch_data(start_date=start_str, end_date=end_str, api=NASA_API_KEY)
 
     neo_dict = {
         "neo_reference_id": [],
@@ -74,11 +74,14 @@ def append_new_data():
     neo_df = pd.DataFrame(neo_dict)
     print(f"[INFO] Created DataFrame with {len(neo_df)} rows and {len(neo_df.columns)} columns.")
 
-    # Type casting
+    # Cast types
     neo_df["close_approach_date"] = pd.to_datetime(neo_df["close_approach_date"], errors="coerce")
-    neo_df["epoch_date_close_approach"] = pd.to_datetime(
-        neo_df["epoch_date_close_approach"], unit="ms", errors="coerce"
-    )
+
+    # Keep as BIGINT (not datetime) to match DB schema
+    neo_df["epoch_date_close_approach"] = pd.to_numeric(
+        neo_df["epoch_date_close_approach"], errors="coerce"
+    ).astype("Int64")
+
     numeric_cols = ["min_diameter_m", "max_diameter_m", "miss_distance_km", "relative_velocity_kph"]
     neo_df[numeric_cols] = neo_df[numeric_cols].apply(pd.to_numeric, errors="coerce")
 
@@ -86,12 +89,13 @@ def append_new_data():
     return neo_df
 
 
+
 def append_to_database(df, database_url, table_name="neo_table"):
     if df.empty:
         print("[WARN] No data to append to the database.")
         return
 
-    print(f"[INFO] Connecting to database: {database_url}")
+    print(f"[INFO] Connecting to database")
     engine = create_engine(database_url)
 
     try:

@@ -8,3 +8,4 @@ imbalanced-learn
 catboost
 xgboost
 python-dotenv
+requests
