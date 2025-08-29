@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
 import requests, pickle, os
 import pandas as pd
 import logging
@@ -84,3 +85,12 @@ def fetch_data(start_date, end_date, api):
         return response.json()
     else:
         print('Unable to connect')
+
+
+
+def get_mlflow_metrics(actual, predicted):
+    accuracy = accuracy_score(actual, predicted)
+    precision = precision_score(actual, predicted)
+    f1 = f1_score(actual, predicted)
+    return accuracy, precision, f1
+

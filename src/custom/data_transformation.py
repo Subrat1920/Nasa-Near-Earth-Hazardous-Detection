@@ -43,7 +43,7 @@ class DataTransformation:
             return df
 
         except Exception as e:
-            raise CustomException(error_message_details(e, sys))
+            raise CustomException(e, sys)
     
     def training_and_testing_split(self, req_data):
         try:
@@ -54,7 +54,7 @@ class DataTransformation:
             logging.info(f'Checking the shapes x_train: {x_train.shape}, x_test: {x_test.shape}, y_train: {y_train.shape}, y_test: {y_test.shape}')
             return x_train, x_test, y_train, y_test
         except Exception as e:
-            raise CustomException(error_message_details(e, sys))
+            raise CustomException(e, sys)
         
     
 
@@ -111,7 +111,7 @@ class DataTransformation:
             return x_train_encoded, y_train_encoded, x_test_encoded, y_test_encoded
 
         except Exception as e:
-            raise CustomException(error_message_details(e, sys))
+            raise CustomException(e, sys)
 
 
     
@@ -121,7 +121,7 @@ class DataTransformation:
             x_resample, y_resample = smote.fit_resample(x_train_encoded, y_train_encoded)
             return x_resample, y_resample
         except Exception as e:
-            raise CustomException(error_message_details(e, sys))
+            raise CustomException(e, sys)
     
     def initiate_data_transformation(self, data):
         try:
@@ -138,4 +138,4 @@ class DataTransformation:
             x_resample, y_resample = self.treating_imbalanced_data(x_train_encoded, y_train_encoded)
             return x_resample, x_test_encoded, y_resample, y_test_encoded
         except Exception as e:
-            raise CustomException(error_message_details(e, sys))
+            raise CustomException(e, sys)

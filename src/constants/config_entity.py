@@ -44,10 +44,5 @@ class ModelTrainerConfig:
         pass
 
 
-if __name__=='__main__':
-    data_transformation_config = DataTransformationConfig()
-    print(data_transformation_config.features)
-    print(data_transformation_config.target)
-    print(data_transformation_config.required_features)
-    print(data_transformation_config.preprocessing_table_name)
+
     

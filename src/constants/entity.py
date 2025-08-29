@@ -28,7 +28,7 @@ class DataTransformationEntity(ArtifactEntity):
         self.DATA_TRANSFORMATION_DIR_PATH: str = 'data_transformation'
         self.PREPROCESSING_PICKLE_TABLE: str = 'preprocessing_table'
         self.LABEL_ENCODER_PICKLE_TABLE:  str = 'label_encoder_table'
-        self.REQUIRED_COLUMNS: list = ['absolute_magnitude_h', 'min_diameter_m','max_diameter_m', 'close_approach_date', 'epoch_date_close_approach','miss_distance_km', 'relative_velocity_kph', 'is_potentially_hazardous','is_sentry_object']
+        self.REQUIRED_COLUMNS: list = ['absolute_magnitude_h', 'min_diameter_m','max_diameter_m', 'epoch_date_close_approach','miss_distance_km', 'relative_velocity_kph', 'is_potentially_hazardous','is_sentry_object']
         self.FEATURE_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach',	'miss_distance_km',	'relative_velocity_kph', 'is_sentry_object', 'diameter_range']
         self.TARGET_COLUMNS: list = ['is_potentially_hazardous']
 
