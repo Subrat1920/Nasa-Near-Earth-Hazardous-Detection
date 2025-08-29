@@ -102,10 +102,10 @@ class DataTransformation:
 
             ## save artifacts in database (append, keeps history)
             preprocessor_df.to_sql(
-                self.preprocessor_table_name, engine, if_exists='replace', index=False
+                self.preprocessor_table_name, engine, if_exists='append', index=False
             )
             label_encoder_df.to_sql(
-                self.label_encoder_table_name, engine, if_exists='replace', index=False
+                self.label_encoder_table_name, engine, if_exists='append', index=False
             )
 
             return x_train_encoded, y_train_encoded, x_test_encoded, y_test_encoded
