@@ -91,6 +91,7 @@ def fetch_data(start_date, end_date, api):
 def get_mlflow_metrics(actual, predicted):
     accuracy = accuracy_score(actual, predicted)
     precision = precision_score(actual, predicted)
+    recall = recall_score(actual, predicted)
     f1 = f1_score(actual, predicted)
-    return accuracy, precision, f1
+    return accuracy, precision, recall, f1
 
