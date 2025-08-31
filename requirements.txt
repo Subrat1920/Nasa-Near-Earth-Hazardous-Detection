@@ -12,3 +12,7 @@ requests
 pyyaml
 mlflow
 dagshub
+optuna
+tensorflow
+keras
+scikeras

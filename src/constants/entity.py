@@ -1,3 +1,5 @@
+from src.constants.params import PARAMS, SCORING
+
 """ ------------------------------------DEFINING ALL THE TABLE NAMES USED --------------------------------"""
 
 class TableNameEntity:
@@ -28,15 +30,19 @@ class DataTransformationEntity(ArtifactEntity):
         self.DATA_TRANSFORMATION_DIR_PATH: str = 'data_transformation'
         self.PREPROCESSING_PICKLE_TABLE: str = 'preprocessing_table'
         self.LABEL_ENCODER_PICKLE_TABLE:  str = 'label_encoder_table'
-        self.REQUIRED_COLUMNS: list = ['absolute_magnitude_h', 'min_diameter_m','max_diameter_m', 'epoch_date_close_approach','miss_distance_km', 'relative_velocity_kph', 'is_potentially_hazardous','is_sentry_object']
-        self.FEATURE_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach',	'miss_distance_km',	'relative_velocity_kph', 'is_sentry_object', 'diameter_range']
+        self.DROP_COLUMNS: list = ['id', 'name', 'close_approach_date', 'close_approach_date_full', 'nasa_jpl_url', 'orbiting_body', 'max_diameter_km', 'min_diameter_km']
+        self.FEATURE_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach',
+       'relative_velocity_kps', 'miss_distance_km', 'is_sentry_object','diameter_range']
         self.TARGET_COLUMNS: list = ['is_potentially_hazardous']
 
         ## PREPROCESSIN NUMERICAL AND CATEGORICAL COLUMNS
         self.CATEGORICAL_COLUMNS: list = ['is_sentry_object']
-        self.NUMERICAL_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach', 'miss_distance_km', 'relative_velocity_kph','diameter_range']
+        self.NUMERICAL_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach', 'relative_velocity_kps','miss_distance_km', 'diameter_range']
         
 
 """-------------------------------------MODEL TRAINING ARTIFACT ENTITY--------------------------------------"""
-
+class ModelTrainingEntity:
+    def __init__(self):
+        self.model_params: dict = PARAMS
+        self.hyper_parameter_scores: dict = SCORING
 

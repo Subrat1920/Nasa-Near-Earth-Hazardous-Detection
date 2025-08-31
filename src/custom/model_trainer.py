@@ -18,7 +18,7 @@ from catboost import CatBoostClassifier
 import dagshub
 from dotenv import load_dotenv
 
-from src.constants.params import PARAMS
+from src.constants.config_entity import ModelTrainerConfig
 from src.exception import CustomException, error_message_details
 from src.logging import logging
 from src.utils.utils import get_mlflow_metrics
@@ -71,7 +71,9 @@ def _save_model_to_file(model, filepath):
 class ModelTrainer:
     def __init__(self):
         # expects: list of tuples -> [(model_name, estimator, param_distributions), ...]
-        self.models_with_params = PARAMS
+        model_train_config = ModelTrainerConfig()
+        self.models_with_params = model_train_config.model_params
+        self.hyp_parameter_scores = model_train_config.parameter_scoring
 
     def model_training_with_mlflow(self, x_train, y_train, x_test, y_test):
         """
@@ -96,7 +98,8 @@ class ModelTrainer:
                 search = RandomizedSearchCV(
                     estimator=model,
                     param_distributions=param_grid,
-                    scoring="accuracy",
+                    scoring=self.hyp_parameter_scores,
+                    refit='average_precision', 
                     n_jobs=-1,
                     verbose=1,
                     n_iter=10,
@@ -167,7 +170,7 @@ class ModelTrainer:
 
                 y_pred_test = model.predict(x_test)
                 acc, prec, f1 = get_mlflow_metrics(y_test, y_pred_test)
-                avg_score = (acc + prec + f1) / 3.0
+                
 
                 input_sample = x_train[:50]
                 # signature computed for reference only

@@ -1,5 +1,5 @@
 import os, sys
-from src.constants.entity import DataIngestionEntity, ArtifactEntity, DataTransformationEntity
+from src.constants.entity import DataIngestionEntity, ArtifactEntity, DataTransformationEntity, ModelTrainingEntity
 
 class ArtifactConfig:
     def __init__(self):
@@ -31,7 +31,7 @@ class DataTransformationConfig:
         self.label_encoder_table_name = data_transformtion_entity.LABEL_ENCODER_PICKLE_TABLE
         self.features = data_transformtion_entity.FEATURE_COLUMNS
         self.target = data_transformtion_entity.TARGET_COLUMNS
-        self.required_features = data_transformtion_entity.REQUIRED_COLUMNS
+        self.drop_columns = data_transformtion_entity.DROP_COLUMNS
 
         ## num and cat cols
         self.cat_cols = data_transformtion_entity.CATEGORICAL_COLUMNS
@@ -41,7 +41,9 @@ class DataTransformationConfig:
 
 class ModelTrainerConfig:
     def __init__(self):
-        pass
+        model_training_entity = ModelTrainingEntity()
+        self.model_params = model_training_entity.model_params
+        self.parameter_scoring = model_training_entity.hyper_parameter_scores
 
 
 

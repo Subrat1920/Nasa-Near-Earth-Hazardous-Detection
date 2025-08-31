@@ -8,6 +8,14 @@ from sklearn.ensemble import (
     AdaBoostClassifier
 )
 
+SCORING = {
+    'f1': 'f1',
+    'recall': 'recall',
+    'precision': 'precision',
+    'roc_auc': 'roc_auc',
+    'average_precision': 'average_precision'
+}
+
 PARAMS = [
     ('Logistic Regression', LogisticRegression(), {
         'penalty': ['l1', 'l2', 'elasticnet', None],
