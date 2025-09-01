@@ -21,7 +21,9 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
+          pip install --upgrade dagshub
 
       - name: Run NEO Prediction Script
         env:
@@ -35,7 +37,7 @@ jobs:
           DAGS_REPO_OWNER_NAME: ${{ secrets.DAGS_REPO_OWNER_NAME }}
           DAGS_REPO_NAME: ${{ secrets.DAGS_REPO_NAME }}
           MLFLOW_REMOTE_TRACKING_URL: ${{ secrets.MLFLOW_REMOTE_TRACKING_URL }}
-          DAGS_USER_TOKEN: ${{ secrets.DAGS_USER_TOKEN }}
+          DAGSHUB_USER_TOKEN: ${{ secrets.DAGS_USER_TOKEN }}
         run: python -m src.pipeline.prediction.predict
 
 
