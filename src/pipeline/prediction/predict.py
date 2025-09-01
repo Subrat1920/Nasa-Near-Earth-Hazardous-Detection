@@ -25,7 +25,7 @@ REPO_NAME = os.getenv("DAGS_REPO_NAME")
 MLFLOW_REMOTE_TRACKING_URL = os.getenv("MLFLOW_REMOTE_TRACKING_URL")
 
 # Initialize DAGHub + MLflow
-dagshub.init(repo_owner=REPO_OWNER_NAME, repo_name=REPO_NAME, mlflow=True)
+dagshub.init(repo_owner=REPO_OWNER_NAME, repo_name=REPO_NAME, mlflow=True, token=os.getenv("DAGS_USER_TOKEN"))
 if MLFLOW_REMOTE_TRACKING_URL:
     mlflow.set_tracking_uri(MLFLOW_REMOTE_TRACKING_URL)
 
