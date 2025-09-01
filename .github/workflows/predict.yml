@@ -1,13 +1,13 @@
-name: Fetch and Append Nasa NEO Data
+name: Predict Fresh Data
 
 on:
   schedule:
-    - cron: '0 0 * * 1'  
-
+    - cron: '0 0 * * 1'  # Runs every Monday at midnight
   workflow_dispatch:
 
 jobs:
-  nasa-job:
+  predicting-job:
+    name: Weekly NEO Prediction Job
     runs-on: ubuntu-latest
 
     steps:
@@ -23,13 +23,19 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run Weekly Nasa Neo Data append script
+      - name: Run NEO Prediction Script
         env:
-          CONNECTION_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
           POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
           POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-          NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
-        run: python -m pusher.weekly_data_pusher
+          DAGS_REPO_OWNER_NAME: ${{ secrets.DAGS_REPO_OWNER_NAME }}
+          DAGS_REPO_NAME: ${{ secrets.DAGS_REPO_NAME }}
+          MLFLOW_REMOTE_TRACKING_URL: ${{ secrets.MLFLOW_REMOTE_TRACKING_URL }}
+        run: python -m src.pipeline.prediction.predict
+
+
+        

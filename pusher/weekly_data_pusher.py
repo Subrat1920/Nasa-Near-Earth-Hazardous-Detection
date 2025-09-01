@@ -58,21 +58,21 @@ def extract_and_store_data_list():
                     # loop over all close approaches, not just [0]
                     for ca_data in asteroid.get("close_approach_data", []):
                         neo_list.append({
-                            "id": asteroid.get("id"),
-                            "name": asteroid.get("name"),
-                            "absolute_magnitude_h": asteroid.get("absolute_magnitude_h"),
-                            "min_diameter_km": asteroid.get("estimated_diameter", {}).get("kilometers", {}).get("estimated_diameter_min"),
-                            "max_diameter_km": asteroid.get("estimated_diameter", {}).get("kilometers", {}).get("estimated_diameter_max"),
-                            "close_approach_date": ca_data.get("close_approach_date"),
-                            "close_approach_date_full": ca_data.get("close_approach_date_full"),
-                            "epoch_date_close_approach": ca_data.get("epoch_date_close_approach"),
-                            "relative_velocity_kps": ca_data.get("relative_velocity", {}).get("kilometers_per_second"),
-                            "miss_distance_km": ca_data.get("miss_distance", {}).get("kilometers"),
-                            "orbiting_body": ca_data.get("orbiting_body"),
-                            "is_potentially_hazardous": asteroid.get("is_potentially_hazardous_asteroid"),
-                            "is_sentry_object": asteroid.get("is_sentry_object"),
-                            "nasa_jpl_url": asteroid.get("nasa_jpl_url"),
-                        })
+                                "id": asteroid.get("id"),
+                                "name": asteroid.get("name"),
+                                "absolute_magnitude_h": asteroid.get("absolute_magnitude_h"),
+                                "min_diameter_km": asteroid.get("estimated_diameter", {}).get("kilometers", {}).get("estimated_diameter_min"),
+                                "max_diameter_km": asteroid.get("estimated_diameter", {}).get("kilometers", {}).get("estimated_diameter_max"),
+                                "close_approach_date": ca_data.get("close_approach_date"),
+                                "close_approach_date_full": ca_data.get("close_approach_date_full"),
+                                "epoch_date_close_approach": ca_data.get("epoch_date_close_approach"),
+                                "relative_velocity_kps": float(ca_data.get("relative_velocity", {}).get("kilometers_per_second", 0.0)),
+                                "miss_distance_km": float(ca_data.get("miss_distance", {}).get("kilometers", 0.0)),
+                                "orbiting_body": ca_data.get("orbiting_body"),
+                                "is_potentially_hazardous": asteroid.get("is_potentially_hazardous_asteroid"),
+                                "is_sentry_object": asteroid.get("is_sentry_object"),
+                                "nasa_jpl_url": asteroid.get("nasa_jpl_url"),
+                            })
 
         # Move to the next 7-day window
         start_date = end_date + timedelta(days=1)
