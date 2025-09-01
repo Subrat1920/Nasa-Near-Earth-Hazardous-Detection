@@ -1,12 +1,12 @@
-from sqlalchemy import create_engine
-import mlflow
-import pickle
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
-import requests, pickle, os
 import pandas as pd
-import logging
-import sys
+from sqlalchemy import create_engine
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
+import requests, pickle, os, tempfile, joblib, codecs, logging, sys, mlflow, base64
+from io import BytesIO
+import pandas as pd
 from src.exception import CustomException
+from catboost import CatBoostClassifier
+from xgboost import XGBClassifier
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -15,54 +15,44 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 def extract_best_model():
     engine = create_engine(DATABASE_URL)
     df = pd.read_sql("SELECT * FROM model_training_logs ORDER BY training_date DESC LIMIT 1", engine)
-    artifact_uri = df["artifact_uri"].iloc[0] + "/models/" + df["model_name"].iloc[0]
-    best_model = mlflow.pyfunc.load_model(artifact_uri)
-    return best_model
 
-def extract_artifact(table_name: str):
-    engine = create_engine(DATABASE_URL)
-    query = f"SELECT artifact FROM {table_name} ORDER BY created_at DESC LIMIT 1"
-    df = pd.read_sql(query, engine)
-    
-    if df.empty:
-        return None
-    
-    # Assuming artifact is stored as a pickled binary blob in DB
-    artifact = pickle.loads(df['artifact'].values[0])
-    return artifact
+    artifact_uri = df["artifact_uri"].iloc[0]
+    model_name = df["model_name"].iloc[0]
 
-def extract_preprocessor_artifact():
-    return extract_artifact("preprocessing_table")
+    # Path to model artifact in MLflow
+    model_artifact_path = f"{artifact_uri}/models/{model_name}/{model_name}.model"
 
-def extract_le_artifact():
-    return extract_artifact("label_encoder_table")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Download artifact
+        local_path = mlflow.artifacts.download_artifacts(model_artifact_path, dst_path=tmpdir)
+
+        # Load based on extension/type
+        if "CatBoost" in model_name:
+            model = CatBoostClassifier()
+            model.load_model(local_path)
+        elif "XGB" in model_name:
+            model = Booster()
+            model.load_model(local_path)
+        else:
+            model = joblib.load(local_path)
+
+    return model
 
 
-def load_pickle_from_db(table_name, db_url= os.getenv('DATABASE_URL')):
-    # Create engine
-    engine = create_engine(db_url)
-    
-    # Fetch the latest artifact
-    query = f"""
-    SELECT * 
-    FROM {table_name}
-    ORDER BY created_at DESC
-    LIMIT 1
-    """
-    df = pd.read_sql(query, engine)
+def load_artifact_from_db(table_name: str, engine):
+        """
+        Load the latest artifact (preprocessor or label encoder) from database safely.
+        """
+        import pandas as pd
+        df = pd.read_sql(f"SELECT artifact FROM {table_name} ORDER BY created_at DESC LIMIT 1", engine)
+        if df.empty:
+            return None
+        artifact_base64 = df['artifact'].values[0]
+        artifact_bytes = base64.b64decode(artifact_base64)
+        artifact = joblib.load(BytesIO(artifact_bytes))
+        return artifact
 
-    if df.empty:
-        raise ValueError(f"No artifacts found in table {table_name}")
 
-    artifact_hex = df.iloc[0]["artifact"]
-
-    # Convert from Postgres BYTEA hex ("\x...") to raw bytes
-    artifact_bytes = bytes.fromhex(artifact_hex[2:])
-
-    # Unpickle
-    obj = pickle.loads(artifact_bytes)
-
-    return obj
 
 def create_engine_for_database(user_name, password, host, port, database_name):
     engine = create_engine(

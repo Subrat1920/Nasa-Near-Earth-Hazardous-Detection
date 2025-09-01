@@ -46,3 +46,11 @@ class ModelTrainingEntity:
         self.model_params: dict = PARAMS
         self.hyper_parameter_scores: dict = SCORING
 
+
+"""-------------------------------------PREDICTING ARTIFACT ENTITY-------------------------------------------"""
+class PredictionEntity:
+    def __init__(self):
+        self.predict_table_name: str = 'prediction_table'
+        
+
+

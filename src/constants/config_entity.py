@@ -1,5 +1,5 @@
 import os, sys
-from src.constants.entity import DataIngestionEntity, ArtifactEntity, DataTransformationEntity, ModelTrainingEntity
+from src.constants.entity import DataIngestionEntity, ArtifactEntity, DataTransformationEntity, ModelTrainingEntity, PredictionEntity
 
 class ArtifactConfig:
     def __init__(self):
@@ -45,6 +45,10 @@ class ModelTrainerConfig:
         self.model_params = model_training_entity.model_params
         self.parameter_scoring = model_training_entity.hyper_parameter_scores
 
-
+class PredictionConfig:
+    def __init__(self):
+        prediction_entity = PredictionEntity()
+        self.prediction_log_table = prediction_entity.predict_table_name
+        
 
     
