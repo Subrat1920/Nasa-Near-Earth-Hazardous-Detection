@@ -1,4 +1,6 @@
 from sqlalchemy import create_engine
+import mlflow
+import pickle
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
 import requests, pickle, os
 import pandas as pd
@@ -7,6 +9,34 @@ import sys
 from src.exception import CustomException
 from dotenv import load_dotenv
 load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+def extract_best_model():
+    engine = create_engine(DATABASE_URL)
+    df = pd.read_sql("SELECT * FROM model_training_logs ORDER BY training_date DESC LIMIT 1", engine)
+    artifact_uri = df["artifact_uri"].iloc[0] + "/models/" + df["model_name"].iloc[0]
+    best_model = mlflow.pyfunc.load_model(artifact_uri)
+    return best_model
+
+def extract_artifact(table_name: str):
+    engine = create_engine(DATABASE_URL)
+    query = f"SELECT artifact FROM {table_name} ORDER BY created_at DESC LIMIT 1"
+    df = pd.read_sql(query, engine)
+    
+    if df.empty:
+        return None
+    
+    # Assuming artifact is stored as a pickled binary blob in DB
+    artifact = pickle.loads(df['artifact'].values[0])
+    return artifact
+
+def extract_preprocessor_artifact():
+    return extract_artifact("preprocessing_table")
+
+def extract_le_artifact():
+    return extract_artifact("label_encoder_table")
+
 
 def load_pickle_from_db(table_name, db_url= os.getenv('DATABASE_URL')):
     # Create engine
