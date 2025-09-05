@@ -235,12 +235,12 @@ class DataDriftDetector:
 if __name__ == "__main__":
     print(f"[INFO] Main function started")
     data_transform_entity = DataTransformationEntity()
-    print("Data transformation entity loaded")
+    print("[INFO] Data transformation entity loaded")
     drop_columns = data_transform_entity.DROP_COLUMNS
-    print("drop columns loaded")
+    print("[INFO] Drop Columns loaded")
     db_uri = os.getenv("DATABASE_URL")
     engine = create_engine(url=db_uri)
-    print('engine created')
+    print('[INFO] Engine Created')
 
     query_for_entire_df = """ select * from train_neo """
     query_for_baseline_set = """ with last_trained_model_date as (
@@ -253,13 +253,15 @@ if __name__ == "__main__":
                                 where tn.close_approach_date::date < ltmd.model_last_trained;
                                 """
     baseline_df = pd.read_sql(query_for_baseline_set, engine)
-    print(f"Baseline dataframe with {baseline_df.shape} shape")
+    print(f"[INFO] Baseline dataframe with {baseline_df.shape} shape")
     new_df = pd.read_sql(query_for_entire_df, engine)
-    print(f"New dataframe with {new_df.shape} shape")
+    print(f"[INFO] New dataframe with {new_df.shape} shape")
 
+    print("[INFO] Performing Feature Engineering")
     baseline_df['diameter_range'] = baseline_df['max_diameter_km'] - baseline_df['min_diameter_km']
     new_df['diameter_range'] = new_df['max_diameter_km'] - new_df['min_diameter_km']
 
+    print("[INFO] Droping not required columns")
     new_df.drop(columns=drop_columns, inplace=True)
     baseline_df.drop(columns=drop_columns, inplace=True)
 
