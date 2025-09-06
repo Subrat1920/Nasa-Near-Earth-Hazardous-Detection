@@ -20,7 +20,7 @@ def get_requirements() -> List[str]:
     return requirement_list
 
 setup(
-    name="Nasa Near Earth Object Hazardous Detection",
+    name="nasa-neo-hazardous-detection",
     version="0.0.1",
     author="Subrat Mishra",
     author_email="3subratmishra1sep@gmail.com",
@@ -35,8 +35,8 @@ setup(
     packages=find_packages(),
     install_requires=get_requirements(),
     classifiers=[
-        "Programming Language :: Python :: 3.10",
-        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.11",
+        "License :: Other/Proprietary License",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Database :: Database Engines/Servers",
