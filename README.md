@@ -1,25 +1,11 @@
 # 🚀 NASA NEO Hazard Classification  
 
-# 🚀 NASA NEO Hazard Classification  
-
-[![Data Pusher](https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/data_pusher.yml?branch=main&logo=github)](https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/data_pusher.yml)
-[![Predict Fresh Data](https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/predict.yml?branch=main&logo=github)](https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/predict.yml)
-[![Data Drift Check](https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/data_drift_check.yml?branch=main&logo=github)](https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/data_drift_check.yml)  
-[![MLflow Tracking](https://img.shields.io/badge/MLflow-Tracking-blue?logo=mlflow)](https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection)  
-![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue?logo=postgresql)  
-![Grafana](https://img.shields.io/badge/Monitoring-Grafana-orange?logo=grafana)  
-![Python](https://img.shields.io/badge/Python-3.10+-yellow?logo=python)  
-![License](https://img.shields.io/badge/License-MIT-green)  
+[![Data Pusher](https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/data_pusher.yml?branch=main&logo=github)](https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/data_pusher.yml)  [![Predict Fresh Data](https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/predict.yml?branch=main&logo=github)](https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/predict.yml)  [![Data Drift Check](https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/data_drift_check.yml?branch=main&logo=github)](https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/data_drift_check.yml)  [![MLflow Tracking](https://img.shields.io/badge/MLflow-Tracking-blue?logo=mlflow)](https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection)  ![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue?logo=postgresql)  ![Grafana](https://img.shields.io/badge/Monitoring-Grafana-orange?logo=grafana)  ![Python](https://img.shields.io/badge/Python-3.10+-yellow?logo=python)  ![License](https://img.shields.io/badge/License-MIT-green)  
 
 This project builds a **production-grade ML pipeline** to classify **Near-Earth Objects (NEOs)** as *hazardous* or *non-hazardous*.  
-The pipeline automates data ingestion, preprocessing, model training, monitoring, and drift detection using **GitHub Actions, PostgreSQL, MLflow, DAGsHub, and Grafana**.  
-)  
-
-This project builds a **production-grade ML pipeline** to classify **Near-Earth Objects (NEOs)** as *hazardous* or *non-hazardous*.  
-The pipeline automates data ingestion, preprocessing, model training, monitoring, and drift detection using **GitHub Actions, PostgreSQL, MLflow, DAGsHub, and Grafana**.  
+It automates **data ingestion, preprocessing, model training, monitoring, and drift detection** using **GitHub Actions, PostgreSQL, MLflow, DAGsHub, and Grafana**.  
 
 ---
-
 
 ## 📑 Project Overview  
 
@@ -46,7 +32,7 @@ The pipeline automates data ingestion, preprocessing, model training, monitoring
 
 ---
 
-## 📂 Workflow  
+## 🔄 Workflow Pipeline  
 
 ### 1. Data Ingestion  
 - GitHub Actions scheduled weekly workflow.  
@@ -83,7 +69,8 @@ The pipeline automates data ingestion, preprocessing, model training, monitoring
 - **Grafana notification channels** enabled for anomalies.  
 
 ---
-## 🌳 Project Tree
+
+## 🌳 Repository Structure  
 
 ```
 ├── 📁 .github/
@@ -126,10 +113,10 @@ The pipeline automates data ingestion, preprocessing, model training, monitoring
 ├── 🐍 main.py
 └── 📄 requirements.txt
 ```
+---
 
 
 ---
-
 
 ## 📊 Grafana Dashboards  
 
@@ -154,9 +141,9 @@ The pipeline automates data ingestion, preprocessing, model training, monitoring
 
 ---
 
-## 📌 Author  
+## 👨‍💻 Author  
 
 **Subrat Mishra**  
-[Portfolio](https://mishra-subrat.framer.website) | [LinkedIn](https://www.linkedin.com/in/subrat1920/) | [GitHub](https://github.com/Subrat1920) | [Medium](https://medium.com/@subrat1920)  
 
+[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-blue?style=flat&logo=internet-explorer)](https://mishra-subrat.framer.website)  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/subrat1920/)  [![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/Subrat1920)  [![Medium](https://img.shields.io/badge/Medium-Read-black?style=flat&logo=medium)](https://medium.com/@subrat1920)  
 ---
