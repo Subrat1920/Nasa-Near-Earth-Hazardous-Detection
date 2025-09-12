@@ -233,44 +233,70 @@ class DataDriftDetector:
 
 # -------------------------- Example usage --------------------------
 if __name__ == "__main__":
-    print(f"[INFO] Main function started")
+    print("[INFO] Main function started")
+
+    # --------------------- Load drop columns ---------------------
     data_transform_entity = DataTransformationEntity()
-    print("[INFO] Data transformation entity loaded")
     drop_columns = data_transform_entity.DROP_COLUMNS
-    print("[INFO] Drop Columns loaded")
+    print(f"[INFO] Drop columns loaded: {drop_columns}")
+
+    # --------------------- Create DB engine ---------------------
     db_uri = os.getenv("DATABASE_URL")
     engine = create_engine(url=db_uri)
-    print('[INFO] Engine Created')
+    print("[INFO] Database engine created")
 
-    query_for_entire_df = """ select * from train_neo """
-    query_for_baseline_set = """ with last_trained_model_date as (
-                                            select max(training_date::date) as model_last_trained
-                                            from model_training_logs
-                                        )
-                                select *
-                                from train_neo tn
-                                cross join last_trained_model_date ltmd
-                                where tn.close_approach_date::date < ltmd.model_last_trained;
-                                """
-    baseline_df = pd.read_sql(query_for_baseline_set, engine)
-    print(f"[INFO] Baseline dataframe with {baseline_df.shape} shape")
-    new_df = pd.read_sql(query_for_entire_df, engine)
-    print(f"[INFO] New dataframe with {new_df.shape} shape")
+    # --------------------- Queries ---------------------
+    # Baseline: data before the last model training
+    query_for_baseline = """
+        WITH last_trained_model_date AS (
+            SELECT MAX(training_date::date) AS model_last_trained
+            FROM model_training_logs
+        )
+        SELECT *
+        FROM train_neo tn
+        CROSS JOIN last_trained_model_date ltmd
+        WHERE tn.close_approach_date::date < ltmd.model_last_trained;
+    """
 
-    print("[INFO] Performing Feature Engineering")
-    baseline_df['diameter_range'] = baseline_df['max_diameter_km'] - baseline_df['min_diameter_km']
-    new_df['diameter_range'] = new_df['max_diameter_km'] - new_df['min_diameter_km']
+    # New/current: only data after last training
+    query_for_new_data = """
+        WITH last_trained_model_date AS (
+            SELECT MAX(training_date::date) AS model_last_trained
+            FROM model_training_logs
+        )
+        SELECT *
+        FROM train_neo tn
+        CROSS JOIN last_trained_model_date ltmd
+        WHERE tn.close_approach_date::date >= ltmd.model_last_trained;
+    """
 
-    print("[INFO] Droping not required columns")
-    new_df.drop(columns=drop_columns, inplace=True)
-    baseline_df.drop(columns=drop_columns, inplace=True)
+    # --------------------- Load data ---------------------
+    baseline_df = pd.read_sql(query_for_baseline, engine)
+    print(f"[INFO] Baseline dataframe loaded with shape: {baseline_df.shape}")
 
-    baseline = baseline_df
-    new_batch = new_df
-    
-    detector = DataDriftDetector(baseline, new_batch, db_uri)
-    print('Detector function called')
+    new_df = pd.read_sql(query_for_new_data, engine)
+    print(f"[INFO] New dataframe loaded with shape: {new_df.shape}")
+
+    # --------------------- Feature Engineering ---------------------
+    print("[INFO] Performing feature engineering: diameter_range")
+    for df in [baseline_df, new_df]:
+        df['diameter_range'] = df['max_diameter_km'] - df['min_diameter_km']
+
+    # --------------------- Drop unnecessary columns ---------------------
+    print(f"[INFO] Dropping not required columns: {drop_columns}")
+    baseline_df.drop(columns=drop_columns, inplace=True, errors='ignore')
+    new_df.drop(columns=drop_columns, inplace=True, errors='ignore')
+
+    # --------------------- Initialize drift detector ---------------------
+    detector = DataDriftDetector(baseline=baseline_df, new_df=new_df, db_uri=db_uri)
+    print("[INFO] DataDriftDetector initialized")
+
+    # --------------------- Detect drift ---------------------
+    print("[INFO] Running drift detection")
     report = detector.detect_drift()
-    print("Report generated")
+    print("[INFO] Drift report generated:")
+    print(report.head())  # print first few rows for quick logging
+
+    # --------------------- Push results to database ---------------------
     detector.push_to_db(table_name="neo_data_drift")
-    print("Pushed to the dataframe")
+    print("[INFO] Drift results pushed to database table 'neo_data_drift'")
