@@ -288,7 +288,7 @@ if __name__ == "__main__":
     new_df.drop(columns=drop_columns, inplace=True, errors='ignore')
 
     # --------------------- Initialize drift detector ---------------------
-    detector = DataDriftDetector(baseline=baseline_df, new_df=new_df, db_uri=db_uri)
+    detector = DataDriftDetector(baseline_df=baseline_df, new_df=new_df, db_uri=db_uri)
     print("[INFO] DataDriftDetector initialized")
 
     # --------------------- Detect drift ---------------------
