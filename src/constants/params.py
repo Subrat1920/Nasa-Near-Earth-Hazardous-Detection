@@ -92,9 +92,9 @@ PARAMS = [
         "random_strength": [0.5, 1, 2, 5],
         "class_weights": [[1, 5], [1, 10], [1, 20]]
     }
-     ),
+    ),
 
-     ('XGB Classifier', XGBClassifier(
+    ('XGB Classifier', XGBClassifier(
         objective="binary:logistic",
         eval_metric="logloss",
         use_label_encoder=False,
@@ -111,5 +111,6 @@ PARAMS = [
         "reg_lambda": [1, 5, 10],
         "reg_alpha": [0, 0.1, 0.5, 1],
         "scale_pos_weight": [1, 5, 10, 20]
-     })
+    }
+    )
 ]

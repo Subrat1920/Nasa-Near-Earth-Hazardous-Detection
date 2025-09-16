@@ -40,7 +40,7 @@ class DataTransformationEntity(ArtifactEntity):
         self.PREPROCESSING_PICKLE_TABLE: str = 'preprocessing_table'
         self.LABEL_ENCODER_PICKLE_TABLE:  str = 'label_encoder_table'
         self.DROP_COLUMNS: list = ['id', 'name', 'close_approach_date', 'close_approach_date_full', 'nasa_jpl_url', 'orbiting_body', 'max_diameter_km', 'min_diameter_km']
-        self.FEATURE_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach', 'relative_velocity_kps', 'miss_distance_km', 'is_sentry_object','diameter_range']
+        self.FEATURE_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach', 'relative_velocity_kps', 'miss_distance_km', 'is_sentry_object', 'diameter_range']
         self.TARGET_COLUMNS: list = ['is_potentially_hazardous']
 
         # PREPROCESSIN NUMERICAL AND CATEGORICAL COLUMNS

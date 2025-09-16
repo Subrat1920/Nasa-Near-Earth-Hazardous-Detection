@@ -17,7 +17,6 @@ class DataIngestion:
         # Ensure directory exists
         os.makedirs(self.data_ingestion_path, exist_ok=True)
 
-
     def initiate_data_ingestion(self, password, username, host, port, name):
         try:
             logging.info("=" * 50)
