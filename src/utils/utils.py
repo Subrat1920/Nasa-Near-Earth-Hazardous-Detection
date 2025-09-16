@@ -67,7 +67,6 @@ def create_engine_for_database(user_name, password, host, port, database_name):
     )
     return engine
 
-
 def read_data_from_pg(user_name, password, host, port, database_name, table_name):
     try:
         logging.info("Creating Engine")
