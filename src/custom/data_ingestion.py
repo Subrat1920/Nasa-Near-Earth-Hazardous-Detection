@@ -1,7 +1,4 @@
 import os, sys
-import pandas as pd
-from dotenv import load_dotenv
-
 from src.exception import CustomException, error_message_details
 from src.logging import logging
 from src.constants.config_entity import DataIngestionConfig
@@ -20,17 +17,22 @@ class DataIngestion:
         # Ensure directory exists
         os.makedirs(self.data_ingestion_path, exist_ok=True)
 
+
     def initiate_data_ingestion(self, password, username, host, port, name):
         try:
             logging.info("=" * 50)
             logging.info("INITIATED DATA INGESTION")
             logging.info("-" * 50)
-
             logging.info("-- Starting reading the data present in the database")
             logging.info("---- Reading Neo Table")
 
             neo_df = read_data_from_pg(
-                username, password, host, port, name, self.table_name
+                username, 
+                password, 
+                host, 
+                port, 
+                name, 
+                self.table_name
             )
             logging.info(f"---- Shape of the Neo data is {neo_df.shape}")
 

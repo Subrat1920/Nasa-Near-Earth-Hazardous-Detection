@@ -5,20 +5,14 @@ import joblib
 import numpy as np
 import pandas as pd
 from datetime import datetime
-
 import mlflow
 from mlflow.models import infer_signature
-
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import classification_report, confusion_matrix
-
-from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
-
 import dagshub
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-
 from src.constants.config_entity import ModelTrainerConfig
 from src.exception import CustomException
 from src.logging import logging
@@ -216,3 +210,4 @@ class ModelTrainer:
         except Exception as e:
             logging.error("Got an error while training the model with MLflow")
             raise CustomException(e, sys)
+        

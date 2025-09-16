@@ -1,12 +1,12 @@
 import pandas as pd
 from sqlalchemy import create_engine
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
-import requests, pickle, os, tempfile, joblib, codecs, logging, sys, mlflow, base64
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import requests, os, tempfile, joblib, logging, sys, mlflow, base64
 from io import BytesIO
 import pandas as pd
 from src.exception import CustomException
 from catboost import CatBoostClassifier
-from xgboost import XGBClassifier
+from xgboost import Booster
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -14,18 +14,16 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 def extract_best_model():
     engine = create_engine(DATABASE_URL)
-    df = pd.read_sql("SELECT * FROM model_training_logs ORDER BY training_date DESC LIMIT 1", engine)
-
+    df = pd.read_sql("""SELECT * FROM model_training_logs 
+                     ORDER BY training_date DESC 
+                     LIMIT 1""", engine)
     artifact_uri = df["artifact_uri"].iloc[0]
     model_name = df["model_name"].iloc[0]
-
     # Path to model artifact in MLflow
     model_artifact_path = f"{artifact_uri}/models/{model_name}/{model_name}.model"
-
     with tempfile.TemporaryDirectory() as tmpdir:
         # Download artifact
         local_path = mlflow.artifacts.download_artifacts(model_artifact_path, dst_path=tmpdir)
-
         # Load based on extension/type
         if "CatBoost" in model_name:
             model = CatBoostClassifier()
@@ -35,9 +33,7 @@ def extract_best_model():
             model.load_model(local_path)
         else:
             model = joblib.load(local_path)
-
     return model
-
 
 def load_artifact_from_db(table_name: str, engine):
         """
@@ -51,8 +47,6 @@ def load_artifact_from_db(table_name: str, engine):
         artifact_bytes = base64.b64decode(artifact_base64)
         artifact = joblib.load(BytesIO(artifact_bytes))
         return artifact
-
-
 
 def create_engine_for_database(user_name, password, host, port, database_name):
     engine = create_engine(
@@ -70,7 +64,6 @@ def create_engine_for_database(user_name, password, host, port, database_name):
 def read_data_from_pg(user_name, password, host, port, database_name, table_name):
     try:
         logging.info("Creating Engine")
-
         engine = create_engine(
             f"postgresql+psycopg2://{user_name}:{password}@{host}:{int(port)}/{database_name}",
             connect_args={
@@ -81,15 +74,11 @@ def read_data_from_pg(user_name, password, host, port, database_name, table_name
                 "keepalives_count": 5
             }
         )
-
         logging.info("Engine Created")
-
         query = f'SELECT * FROM "{table_name}"'
         logging.info(f"Executing query: {query}")
-
         df = pd.read_sql(query, engine)
         logging.info(f"Data read from the database with table name {table_name} having shape: {df.shape}")
-
         return df
 
     except Exception as e:
