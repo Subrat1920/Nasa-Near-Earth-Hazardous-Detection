@@ -2,15 +2,12 @@ import os
 import sys
 import warnings
 warnings.filterwarnings("ignore")
-
 from dotenv import load_dotenv
-
-from src.exception import CustomException, error_message_details
+from src.exception import CustomException
 from src.logging import logging
 from src.custom.data_ingestion import DataIngestion
 from src.custom.data_transformation import DataTransformation
-from src.custom.model_trainer import ModelTrainer   # <-- import ModelTrainer
-
+from src.custom.model_trainer import ModelTrainer
 # Load environment variables
 load_dotenv()
 

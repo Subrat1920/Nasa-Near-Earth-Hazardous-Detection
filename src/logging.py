@@ -1,6 +1,7 @@
 import logging
 import os
 
+
 LOG_DIR = os.path.join(os.getcwd(), "app-logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 
