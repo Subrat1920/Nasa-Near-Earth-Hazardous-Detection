@@ -1,7 +1,13 @@
-import pandas as pd
+import requests
+import os
+import tempfile
+import joblib
+import logging
+import sys
+import mlflow
+import base64
 from sqlalchemy import create_engine
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-import requests, os, tempfile, joblib, logging, sys, mlflow, base64
 from io import BytesIO
 import pandas as pd
 from src.exception import CustomException
@@ -12,10 +18,11 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+
 def extract_best_model():
     engine = create_engine(DATABASE_URL)
-    df = pd.read_sql("""SELECT * FROM model_training_logs 
-                     ORDER BY training_date DESC 
+    df = pd.read_sql("""SELECT * FROM model_training_logs
+                     ORDER BY training_date DESC
                      LIMIT 1""", engine)
     artifact_uri = df["artifact_uri"].iloc[0]
     model_name = df["model_name"].iloc[0]
@@ -35,6 +42,7 @@ def extract_best_model():
             model = joblib.load(local_path)
     return model
 
+
 def load_artifact_from_db(table_name: str, engine):
         """
         Load the latest artifact (preprocessor or label encoder) from database safely.
@@ -48,6 +56,7 @@ def load_artifact_from_db(table_name: str, engine):
         artifact = joblib.load(BytesIO(artifact_bytes))
         return artifact
 
+
 def create_engine_for_database(user_name, password, host, port, database_name):
     engine = create_engine(
         f"postgresql+psycopg2://{user_name}:{password}@{host}:{port}/{database_name}",
@@ -60,6 +69,7 @@ def create_engine_for_database(user_name, password, host, port, database_name):
             }
     )
     return engine
+
 
 def read_data_from_pg(user_name, password, host, port, database_name, table_name):
     try:
@@ -93,6 +103,7 @@ def fetch_data(start_date, end_date, api):
         return response.json()
     else:
         print('Unable to connect')
+
 
 def get_mlflow_metrics(actual, predicted):
     accuracy = accuracy_score(actual, predicted)

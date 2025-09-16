@@ -38,7 +38,7 @@ class DataTransformation:
     def gathering_required_data(self, neo_data):
         try:
             logging.info(f'Before Required Gathering Columns: {neo_data.columns.tolist()}')
-            neo_data['diameter_range']=neo_data['max_diameter_km']-neo_data['min_diameter_km']
+            neo_data['diameter_range'] = neo_data['max_diameter_km'] - neo_data['min_diameter_km']
             df = neo_data.drop(columns=self.drop_features, axis=1)
             logging.info(f'After Required Gathering Columns: {df.columns.tolist()}')
             return df
@@ -54,13 +54,13 @@ class DataTransformation:
             x['relative_velocity_kps'] = np.log(x['relative_velocity_kps'])
             x['miss_distance_km'] = np.sqrt(x['miss_distance_km'])
 
-            logging.info(f"""Independent Features: {self.features} 
+            logging.info(f"""Independent Features: {self.features}
                          and dependent feature {self.target}""")
             x_train, x_test, y_train, y_test = train_test_split(
                 x, y, test_size=0.2, random_state=42, stratify=y
             )
-            logging.info(f"""Shapes x_train: {x_train.shape}, 
-                         x_test: {x_test.shape}, y_train: {y_train.shape}, 
+            logging.info(f"""Shapes x_train: {x_train.shape},
+                         x_test: {x_test.shape}, y_train: {y_train.shape},
                          y_test: {y_test.shape}""")
             return x_train, x_test, y_train, y_test
         except Exception as e:
@@ -108,9 +108,9 @@ class DataTransformation:
                 "created_at": pd.Timestamp.now()
             }])
 
-            preprocessor_df.to_sql(self.preprocessor_table_name, 
+            preprocessor_df.to_sql(self.preprocessor_table_name,
                                    engine, if_exists='append', index=False)
-            label_encoder_df.to_sql(self.label_encoder_table_name, 
+            label_encoder_df.to_sql(self.label_encoder_table_name,
                                     engine, if_exists='append', index=False)
 
             return x_train_encoded, y_train_encoded, x_test_encoded, y_test_encoded
@@ -150,10 +150,10 @@ class DataTransformation:
         Load the latest artifact (preprocessor or label encoder) from database safely.
         """
         import pandas as pd
-        df = pd.read_sql(f"""SELECT artifact FROM 
-                         {table_name} 
-                         ORDER BY created_at DESC 
-                         LIMIT 1""", 
+        df = pd.read_sql(f"""SELECT artifact FROM
+                         {table_name}
+                         ORDER BY created_at DESC
+                         LIMIT 1""",
                          engine)
         if df.empty:
             return None

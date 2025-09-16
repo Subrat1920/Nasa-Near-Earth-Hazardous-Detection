@@ -210,4 +210,4 @@ class ModelTrainer:
         except Exception as e:
             logging.error("Got an error while training the model with MLflow")
             raise CustomException(e, sys)
-        
+     

@@ -2,9 +2,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import (
-    RandomForestClassifier, 
-    GradientBoostingClassifier, 
-    ExtraTreesClassifier, 
+    RandomForestClassifier,
+    GradientBoostingClassifier,
+    ExtraTreesClassifier,
     AdaBoostClassifier
 )
 from catboost import CatBoostClassifier
@@ -83,11 +83,11 @@ PARAMS = [
         loss_function="Logloss",
         verbose=0
     ), {
-        "iterations":[x*100 for x in range(1,10, 2)],
-        "depth" : [x for x in range(0,10, 2)],
-        "learning_rate" : [0.01, 0.05, 0.1, 0.001, 0.005],
-        "l2_leaf_reg" : [x for x in range(1,10, 2)],
-        "border_count" : [32, 64, 128],
+        "iterations": [x*100 for x in range(1,10, 2)],
+        "depth": [x for x in range(0,10, 2)],
+        "learning_rate": [0.01, 0.05, 0.1, 0.001, 0.005],
+        "l2_leaf_reg": [x for x in range(1,10, 2)],
+        "border_count": [32, 64, 128],
         "bagging_temperature": [0, 1, 0.5, 2],
         "random_strength": [0.5, 1, 2, 5],
         "class_weights": [[1, 5], [1, 10], [1, 20]]
@@ -95,7 +95,7 @@ PARAMS = [
      ),
 
      ('XGB Classifier', XGBClassifier(objective="binary:logistic",
-                                    eval_metric="logloss",      
+                                    eval_metric="logloss",
                                     use_label_encoder=False,
                                     random_state=42,
                                     n_jobs=-1), {

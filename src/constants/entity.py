@@ -10,12 +10,16 @@ class TableNameEntity:
 
 
 """ ----------ARTIFACT DIRECTORY ----------"""
+
+
 class ArtifactEntity:
     def __init__(self):
         self.ARTIFACT_DIR_NAME: str = 'artifacts'
 
 
 """ --------DATA INGESTION ARTIFACT ---------"""
+
+
 class DataIngestionEntity(TableNameEntity):
     def __init__(self):
         super().__init__()
@@ -27,6 +31,8 @@ class DataIngestionEntity(TableNameEntity):
 
 
 """------DATA TRANSFORMATION ARTIFACT ENTITY------"""
+
+
 class DataTransformationEntity(ArtifactEntity):
     def __init__(self):
         super().__init__()
@@ -43,6 +49,8 @@ class DataTransformationEntity(ArtifactEntity):
         
 
 """---------MODEL TRAINING ARTIFACT ENTITY---------"""
+
+
 class ModelTrainingEntity:
     def __init__(self):
         self.model_params: dict = PARAMS
@@ -50,6 +58,8 @@ class ModelTrainingEntity:
 
 
 """-----PREDICTING ARTIFACT ENTITY-----"""
+
+
 class PredictionEntity:
     def __init__(self):
         self.predict_table_name: str = 'prediction_table'

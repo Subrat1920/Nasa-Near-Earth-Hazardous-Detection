@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 from src.exception import CustomException, error_message_details
 from src.logging import logging
 from src.constants.config_entity import DataIngestionConfig
@@ -13,7 +14,6 @@ class DataIngestion:
         self.data_ingestion_csv_path = os.path.join(
             self.data_ingestion_path, self.config.data_csv_config
         )
-
         # Ensure directory exists
         os.makedirs(self.data_ingestion_path, exist_ok=True)
 
@@ -27,11 +27,11 @@ class DataIngestion:
             logging.info("---- Reading Neo Table")
 
             neo_df = read_data_from_pg(
-                username, 
-                password, 
-                host, 
-                port, 
-                name, 
+                username,
+                password,
+                host,
+                port,
+                name,
                 self.table_name
             )
             logging.info(f"---- Shape of the Neo data is {neo_df.shape}")
@@ -39,7 +39,6 @@ class DataIngestion:
             logging.info("-- Storing the data in located directory")
             neo_df.to_csv(self.data_ingestion_csv_path, index=False)
             logging.info(f"---- Neo Data Stored at {self.data_ingestion_csv_path}")
-
             return neo_df
 
         except Exception as e:
