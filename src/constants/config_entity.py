@@ -49,6 +49,3 @@ class PredictionConfig:
     def __init__(self):
         prediction_entity = PredictionEntity()
         self.prediction_log_table = prediction_entity.predict_table_name
-        
-
-    

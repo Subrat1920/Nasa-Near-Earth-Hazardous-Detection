@@ -51,6 +51,3 @@ class ModelTrainingEntity:
 class PredictionEntity:
     def __init__(self):
         self.predict_table_name: str = 'prediction_table'
-        
-
-
