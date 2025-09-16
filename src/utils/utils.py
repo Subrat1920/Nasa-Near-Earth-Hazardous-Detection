@@ -44,10 +44,7 @@ def extract_best_model():
 
 
 def load_artifact_from_db(table_name: str, engine):
-        """
-        Load the latest artifact (preprocessor or label encoder) from database safely.
-        """
-        import pandas as pd
+        """Load the latest artifact (preprocessor or label encoder) from database safely."""
         df = pd.read_sql(f"SELECT artifact FROM {table_name} ORDER BY created_at DESC LIMIT 1", engine)
         if df.empty:
             return None

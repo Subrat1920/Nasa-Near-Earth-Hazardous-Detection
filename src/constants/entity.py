@@ -45,8 +45,8 @@ class DataTransformationEntity(ArtifactEntity):
 
         # PREPROCESSIN NUMERICAL AND CATEGORICAL COLUMNS
         self.CATEGORICAL_COLUMNS: list = ['is_sentry_object']
-        self.NUMERICAL_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach', 'relative_velocity_kps','miss_distance_km','diameter_range']
-        
+        self.NUMERICAL_COLUMNS: list = ['absolute_magnitude_h', 'epoch_date_close_approach', 'relative_velocity_kps', 'miss_distance_km', 'diameter_range']
+
 
 """---------MODEL TRAINING ARTIFACT ENTITY---------"""
 

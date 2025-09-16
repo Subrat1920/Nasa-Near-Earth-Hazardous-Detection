@@ -83,10 +83,10 @@ PARAMS = [
         loss_function="Logloss",
         verbose=0
     ), {
-        "iterations": [x*100 for x in range(1,10, 2)],
-        "depth": [x for x in range(0,10, 2)],
+        "iterations": [x*100 for x in range(1, 10, 2)],
+        "depth": [x for x in range(0, 10, 2)],
         "learning_rate": [0.01, 0.05, 0.1, 0.001, 0.005],
-        "l2_leaf_reg": [x for x in range(1,10, 2)],
+        "l2_leaf_reg": [x for x in range(1, 10, 2)],
         "border_count": [32, 64, 128],
         "bagging_temperature": [0, 1, 0.5, 2],
         "random_strength": [0.5, 1, 2, 5],
@@ -94,20 +94,22 @@ PARAMS = [
     }
      ),
 
-     ('XGB Classifier', XGBClassifier(objective="binary:logistic",
-                                    eval_metric="logloss",
-                                    use_label_encoder=False,
-                                    random_state=42,
-                                    n_jobs=-1), {
+     ('XGB Classifier', XGBClassifier(
+        objective="binary:logistic",
+        eval_metric="logloss",
+        use_label_encoder=False,
+        random_state=42,
+        n_jobs=-1
+    ), {
         "n_estimators": [200, 500, 1000],
         "max_depth": [3, 5, 7, 10],
         "learning_rate": [0.01, 0.05, 0.1, 0.2],
-        "subsample": [0.6, 0.8, 1.0],    
+        "subsample": [0.6, 0.8, 1.0],
         "colsample_bytree": [0.6, 0.8, 1.0],
         "min_child_weight": [1, 3, 5, 7],
         "gamma": [0, 0.1, 0.2, 0.5],
-        "reg_lambda": [1, 5, 10],          
-        "reg_alpha": [0, 0.1, 0.5, 1],      
+        "reg_lambda": [1, 5, 10],
+        "reg_alpha": [0, 0.1, 0.5, 1],
         "scale_pos_weight": [1, 5, 10, 20]
      })
 ]
