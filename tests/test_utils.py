@@ -60,6 +60,7 @@ def test_get_mlflow_metrics():
     assert 0 <= rec <= 1
     assert 0 <= f1 <= 1
 
+
 # ----------------- TEST load_artifact_from_db -----------------
 @patch("pandas.read_sql")
 @patch("joblib.load")
@@ -73,6 +74,7 @@ def test_load_artifact_from_db(mock_joblib_load, mock_read_sql):
 
     result = utils.load_artifact_from_db("table", MagicMock())
     assert result == dummy_obj
+
 
 # ----------------- TEST extract_best_model -----------------
 @patch("mlflow.artifacts.download_artifacts")
