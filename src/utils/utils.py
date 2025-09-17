@@ -44,13 +44,13 @@ def extract_best_model():
 
 
 def load_artifact_from_db(table_name: str, engine):
-        df = pd.read_sql(f"SELECT artifact FROM {table_name} ORDER BY created_at DESC LIMIT 1", engine)
-        if df.empty:
-            return None
-        artifact_base64 = df['artifact'].values[0]
-        artifact_bytes = base64.b64decode(artifact_base64)
-        artifact = joblib.load(BytesIO(artifact_bytes))
-        return artifact
+    df = pd.read_sql(f"SELECT artifact FROM {table_name} ORDER BY created_at DESC LIMIT 1", engine)
+    if df.empty:
+        return None
+    artifact_base64 = df['artifact'].values[0]
+    artifact_bytes = base64.b64decode(artifact_base64)
+    artifact = joblib.load(BytesIO(artifact_bytes))
+    return artifact
 
 
 def create_engine_for_database(user_name, password, host, port, database_name):
