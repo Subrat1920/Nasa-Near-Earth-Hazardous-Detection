@@ -77,20 +77,17 @@ def test_load_artifact_from_db(mock_joblib_load, mock_read_sql):
 
 
 # ----------------- TEST extract_best_model -----------------
-@patch("mlflow.artifacts.download_artifacts")
-@patch("pandas.read_sql")
-@patch("joblib.load")
-@patch("catboost.CatBoostClassifier.load_model")
-@patch("xgboost.Booster.load_model")
+@patch("src.utils.utils.mlflow.artifacts.download_artifacts")
+@patch("src.utils.utils.pd.read_sql")
+@patch("src.utils.utils.joblib.load")
 def test_extract_best_model(mock_joblib_load, mock_read_sql, mock_mlflow_download):
     # Mock dataframe
     df = pd.DataFrame({
-        "artifact_uri": ["/fake/path"],
-        "model_name": ["DummyModel"]
+        "artifact_uri":["/fake/path"],
+        "model_name":["DummyModel"]
     })
     mock_read_sql.return_value = df
     mock_mlflow_download.return_value = "/tmp/fake.model"
     mock_joblib_load.return_value = "model_object"
-
     result = utils.extract_best_model()
     assert result == "model_object"
