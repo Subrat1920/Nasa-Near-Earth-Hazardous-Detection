@@ -16,4 +16,5 @@ optuna
 tensorflow
 keras
 scikeras
+pytest
 -e .

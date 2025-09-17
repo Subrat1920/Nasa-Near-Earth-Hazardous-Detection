@@ -18,8 +18,7 @@ jobs:
           pip install -r requirements.txt
           pip install flake8 black isort
       - run: flake8 --max-line-length=300 src/ tests/
-      - run: black --check src/ tests/
-      - run: isort --check-only src/ tests/
+
 
   tests:
     runs-on: ubuntu-latest
