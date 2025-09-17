@@ -18,7 +18,8 @@ sample_df = pd.DataFrame({
     "is_potentially_hazardous": [True, False],
     "is_sentry_object": [False, False],
     "nasa_jpl_url": [
-        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=2085990"
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=2085990",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=2523915"
     ]
 })
 
