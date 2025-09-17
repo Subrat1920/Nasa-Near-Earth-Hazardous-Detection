@@ -5,7 +5,6 @@ import pickle
 # Import functions to test
 from src.utils import utils
 
-
 # ----------------- TEST create_engine_for_database -----------------
 def test_create_engine_for_database_returns_engine():
     engine = utils.create_engine_for_database("user", "pass", "host", "5432", "db")
@@ -76,16 +75,21 @@ def test_load_artifact_from_db(mock_read_sql, mock_joblib_load):
 
 
 # ----------------- TEST extract_best_model -----------------
-@patch("joblib.load")
-@patch("pandas.read_sql")
-@patch("mlflow.artifacts.download_artifacts")
-def test_extract_best_model(mock_mlflow_download, mock_read_sql, mock_joblib_load):
-    # Mock dataframe
+@patch("src.utils.utils.create_engine")
+@patch("src.utils.utils.mlflow.artifacts.download_artifacts")
+@patch("src.utils.utils.pd.read_sql")
+@patch("src.utils.utils.joblib.load")
+def test_extract_best_model(mock_joblib_load, mock_read_sql, mock_mlflow_download, mock_create_engine):
+    # Mock engine to avoid real DB call
+    mock_create_engine.return_value = MagicMock()
+
+    # Mock dataframe returned from SQL
     df = pd.DataFrame({
         "artifact_uri": ["/fake/path"],
         "model_name": ["DummyModel"]
     })
     mock_read_sql.return_value = df
+
     mock_mlflow_download.return_value = "/tmp/fake.model"
     mock_joblib_load.return_value = "model_object"
 
