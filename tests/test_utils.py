@@ -9,15 +9,14 @@ from src.utils import utils
 # ----------------- TEST create_engine_for_database -----------------
 def test_create_engine_for_database_returns_engine():
     engine = utils.create_engine_for_database("user", "pass", "host", "5432", "db")
-    # Just check type
     from sqlalchemy.engine.base import Engine
     assert isinstance(engine, Engine)
 
 
 # ----------------- TEST read_data_from_pg -----------------
-@patch("src.utils.utils.create_engine")
 @patch("pandas.read_sql")
-def test_read_data_from_pg(mock_read_sql, mock_create_engine):
+@patch("src.utils.utils.create_engine")
+def test_read_data_from_pg(mock_create_engine, mock_read_sql):
     mock_create_engine.return_value = MagicMock()
     mock_df = pd.DataFrame({"col1": [1, 2]})
     mock_read_sql.return_value = mock_df
@@ -62,9 +61,9 @@ def test_get_mlflow_metrics():
 
 
 # ----------------- TEST load_artifact_from_db -----------------
-@patch("pandas.read_sql")
 @patch("joblib.load")
-def test_load_artifact_from_db(mock_joblib_load, mock_read_sql):
+@patch("pandas.read_sql")
+def test_load_artifact_from_db(mock_read_sql, mock_joblib_load):
     # Create a fake base64 artifact
     dummy_obj = {"a": 1}
     serialized = base64.b64encode(pickle.dumps(dummy_obj)).decode('utf-8')
@@ -77,17 +76,18 @@ def test_load_artifact_from_db(mock_joblib_load, mock_read_sql):
 
 
 # ----------------- TEST extract_best_model -----------------
-@patch("src.utils.utils.mlflow.artifacts.download_artifacts")
-@patch("src.utils.utils.pd.read_sql")
-@patch("src.utils.utils.joblib.load")
-def test_extract_best_model(mock_joblib_load, mock_read_sql, mock_mlflow_download):
+@patch("joblib.load")
+@patch("pandas.read_sql")
+@patch("mlflow.artifacts.download_artifacts")
+def test_extract_best_model(mock_mlflow_download, mock_read_sql, mock_joblib_load):
     # Mock dataframe
     df = pd.DataFrame({
-        "artifact_uri":["/fake/path"],
-        "model_name":["DummyModel"]
+        "artifact_uri": ["/fake/path"],
+        "model_name": ["DummyModel"]
     })
     mock_read_sql.return_value = df
     mock_mlflow_download.return_value = "/tmp/fake.model"
     mock_joblib_load.return_value = "model_object"
+
     result = utils.extract_best_model()
     assert result == "model_object"
