@@ -5,6 +5,7 @@ import pickle
 # Import functions to test
 from src.utils import utils
 
+
 # ----------------- TEST create_engine_for_database -----------------
 def test_create_engine_for_database_returns_engine():
     engine = utils.create_engine_for_database("user", "pass", "host", "5432", "db")
