@@ -1,6 +1,6 @@
 scikit-learn
 sqlalchemy
-psycopg2
+psycopg2-binary
 pandas
 ipykernel
 numpy
@@ -17,4 +17,5 @@ tensorflow
 keras
 scikeras
 pytest
+flask
 -e .

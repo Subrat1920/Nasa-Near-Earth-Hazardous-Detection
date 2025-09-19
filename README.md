@@ -76,6 +76,7 @@ It automates **data ingestion, preprocessing, model training, monitoring, and dr
 ```
 ├── 📁 .github/
 │   └── 📁 workflows/
+|       ├── ⚙️ continous_integration.yml
 │       ├── ⚙️ data_drift_check.yml
 │       ├── ⚙️ data_pusher.yml
 │       └── ⚙️ predict.yml

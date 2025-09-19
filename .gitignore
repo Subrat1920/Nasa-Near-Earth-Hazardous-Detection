@@ -65,6 +65,8 @@ db.sqlite3-journal
 instance/
 .webassets-cache
 catboost_info/
+.vscode/
+.vscode
 
 # Scrapy stuff:
 .scrapy
