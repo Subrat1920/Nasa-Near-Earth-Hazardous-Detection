@@ -74,14 +74,23 @@ It automates **data ingestion, preprocessing, model training, monitoring, and dr
 ## 🌳 Repository Structure  
 
 ```
+├── 📁 .git/ 🚫 (auto-hidden)
 ├── 📁 .github/
 │   └── 📁 workflows/
-|       ├── ⚙️ continous_integration.yml
+│       ├── ⚙️ continous_integration.yml
 │       ├── ⚙️ data_drift_check.yml
 │       ├── ⚙️ data_pusher.yml
 │       └── ⚙️ predict.yml
 ├── 📁 Data/
 │   └── 📄 neo_data.csv
+├── 📁 Notebook/
+│   └── 📓 border_line_smote.ipynb
+├── 📁 Research_Paper/
+│   ├── 📁 Images/
+│   │   └── 🖼️ System Architecture.png
+│   ├── 📄 Automated End.docx
+│   ├── 📕 Automated End.pdf
+│   └── 📊 Presentation.pptx
 ├── 📁 pusher/
 │   ├── 🐍 __init__.py
 │   └── 🐍 weekly_data_pusher.py
@@ -99,7 +108,7 @@ It automates **data ingestion, preprocessing, model training, monitoring, and dr
 │   │   └── 🐍 model_trainer.py
 │   ├── 📁 pipeline/
 │   │   ├── 📁 prediction/
-│   │   │   ├── 🐍 __ini__.py
+│   │   │   ├── 🐍 __init__.py
 │   │   │   └── 🐍 predict.py
 │   │   └── 🐍 __init__.py
 │   ├── 📁 utils/
@@ -109,11 +118,17 @@ It automates **data ingestion, preprocessing, model training, monitoring, and dr
 │   ├── 🐍 exception.py
 │   └── 🐍 logging.py
 ├── 📁 tests/
-│   └── 🐍 __init__.py
+│   ├── 🐍 __init__.py
+│   ├── 🐍 test_data_ingestion.py
+│   └── 🐍 test_utils.py
 ├── 🚫 .gitignore
+├── 📜 LICENSE
 ├── 📖 README.md
+├── 🐍 app.py
 ├── 🐍 main.py
-└── 📄 requirements.txt
+├── 🐍 predict_example.py
+├── 📄 requirements.txt
+└── 🐍 setup.py
 ```
 ---
 
