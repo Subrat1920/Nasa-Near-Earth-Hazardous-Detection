@@ -14,11 +14,17 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 REPO_OWNER_NAME = os.getenv("DAGS_REPO_OWNER_NAME")
 REPO_NAME = os.getenv("DAGS_REPO_NAME")
 MLFLOW_REMOTE_TRACKING_URL = os.getenv("MLFLOW_REMOTE_TRACKING_URL")
+DAGS_USER_TOKEN = os.getenv("DAGS_USER_TOKEN")
 
-# Initialize DAGHub + MLflow
-dagshub.init(repo_owner=REPO_OWNER_NAME, repo_name=REPO_NAME, mlflow=True)
+dagshub.init(
+    repo_owner=REPO_OWNER_NAME,
+    repo_name=REPO_NAME,
+    mlflow=True
+)
+
 if MLFLOW_REMOTE_TRACKING_URL:
     mlflow.set_tracking_uri(MLFLOW_REMOTE_TRACKING_URL)
+
 
 app = Flask(__name__)
 
@@ -65,7 +71,7 @@ def index():
             "5. Last Trained on": str(date_trained),
             "6. GitHub Link": "https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection.git",
             "7. DagsHub Link (Data Version Control)": "https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection.mlflow",
-            "8. How to use the model an an API": f"{web_url}call_docs",
+            "8. How to use the model as an API": f"{web_url}call_docs",
             "9. Documentation": f"{web_url}docs"
         })
         
