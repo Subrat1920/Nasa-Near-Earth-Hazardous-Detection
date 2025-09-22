@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 import os
 import mlflow
-import dagshub
+# import dagshub
 import pandas as pd
 import numpy as np
 from dotenv import load_dotenv
@@ -11,25 +12,30 @@ from src.constants.config_entity import DataTransformationConfig
 from src.constants.params import PARAMS
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
+
 REPO_OWNER_NAME = os.getenv("DAGS_REPO_OWNER_NAME")
 REPO_NAME = os.getenv("DAGS_REPO_NAME")
-MLFLOW_REMOTE_TRACKING_URL = os.getenv("MLFLOW_REMOTE_TRACKING_URL")
 DAGS_USER_TOKEN = os.getenv("DAGS_USER_TOKEN")
 
-dagshub.init(
-    repo_owner=REPO_OWNER_NAME,
-    repo_name=REPO_NAME,
-    mlflow=True
-)
+# Set MLflow tracking URI directly with token (no interactive auth)
+MLFLOW_TRACKING_URI = f"https://{DAGS_USER_TOKEN}@dagshub.com/{REPO_OWNER_NAME}/{REPO_NAME}.mlflow"
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
-if MLFLOW_REMOTE_TRACKING_URL:
-    mlflow.set_tracking_uri(MLFLOW_REMOTE_TRACKING_URL)
-
+# Now you can use MLflow as usual
+# e.g., mlflow.list_experiments()
 
 app = Flask(__name__)
 
+parsed = urlparse(DATABASE_URL)
+query = parse_qs(parsed.query)
+
+if "channel_binding" in query:
+    del query["channel_binding"]
+
+new_query = urlencode(query, doseq=True)
+cleaned_url = urlunparse(parsed._replace(query=new_query))
 # DB connection
-engine = create_engine(url=DATABASE_URL)
+engine = create_engine(cleaned_url, echo=True, future=True)
 best_model = extract_best_model()
 preprocessor = load_artifact_from_db("preprocessing_table", engine)
 label_encoder = load_artifact_from_db("label_encoder_table", engine)
@@ -140,7 +146,7 @@ def documentation():
             "probability_of_true": 0.5530,
             "used_model_trained_on": "2025-09-01"
         },
-        "j. author": "Subrat Mishra",
+        "j. author": ["Subrat Mishra", "Subasis Mishra"],
         "k. repository": "https://github.com/Subrat1920/nasa-neo-hazard-classification",
         "l. portfolio": "https://mishra-subrat.framer.website/"
     })
@@ -258,4 +264,4 @@ def predict():
 
 
 if __name__=="__main__":
-    app.run(debug=False, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)
