@@ -67,7 +67,8 @@ instance/
 catboost_info/
 .vscode/
 .vscode
-
+Notebooks
+Notebook
 # Scrapy stuff:
 .scrapy
 .*json
