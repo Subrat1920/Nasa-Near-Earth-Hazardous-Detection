@@ -1,0 +1,12 @@
+stages:
+  ingest:
+    cmd: python main.py
+    deps: 
+      - src\custom\data_ingestion.py
+      - src\custom\data_transformation.py
+      - src\custom\model_trainer.py
+    outs:
+      - artifact\data_ingestion_metadata.json
+      - artifact\data_trasformation_metadata.json
+      - artifact\model_trainer_metadata.json
+    desc: "Pipeline stages with artifacts store in DB"
