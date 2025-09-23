@@ -18,4 +18,5 @@ keras
 scikeras
 pytest
 flask
+dvc[all]
 -e .
