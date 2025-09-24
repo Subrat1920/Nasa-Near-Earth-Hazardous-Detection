@@ -1,8 +1,8 @@
 stages:
   api_extraction:
     cmd: echo "extraction of data from api"
-    deps:
-      - src/custom/api_extraction.py
+    # deps:
+    #   - src/custom/api_extraction.py
     outs:
       - artifact/api_data.json
     desc: "Extract data from remote API"
@@ -47,6 +47,7 @@ stages:
   serve_model:
     cmd: python app.py
     deps:
+      - app.py
       - src/custom/model_trainer.py
       - artifact/model_trainer_db.json
     outs:
