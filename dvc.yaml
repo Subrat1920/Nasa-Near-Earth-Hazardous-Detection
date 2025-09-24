@@ -1,6 +1,6 @@
 stages:
   api_extraction:
-    cmd: python src/custom/api_extraction.py
+    cmd: echo "extraction of data from api"
     deps:
       - src/custom/api_extraction.py
     outs:
