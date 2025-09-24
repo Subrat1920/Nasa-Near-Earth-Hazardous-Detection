@@ -40,7 +40,8 @@ Data/neo_data.csv
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-
+artifact
+artifacts
 # Unit test / coverage reports
 htmlcov/
 .tox/

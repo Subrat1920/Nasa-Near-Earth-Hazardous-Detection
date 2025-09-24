@@ -1,8 +1,0 @@
-{
-    "artifact_type": "DB table",
-    "table_name": "train_neo",
-    "last_ingested": "01-09-2025",
-    "rows": "64000",
-    "columns": "15",
-    "description": "Weekly snapshot of NEO data pulled from NASA API via PostgreSQL"
-}

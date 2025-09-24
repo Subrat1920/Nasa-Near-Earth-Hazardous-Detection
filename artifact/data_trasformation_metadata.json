@@ -1,6 +1,0 @@
-{
-    "artifact_type": "DB tables",
-    "tables": ["preprocessor", "label_encoder"],
-    "last_updated": "01-09-2025",
-    "description": "Preprocessor and label encoder stored in PostgreSQL"
-}

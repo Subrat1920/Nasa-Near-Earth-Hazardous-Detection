@@ -1,7 +1,0 @@
-{
-    "artifact_type": "DB table",
-    "table_name": "model_artifact",
-    "mlflow_run_id": "1",
-    "last_updated": "1-09-2025",
-    "description": "Best model artifact logged in MLflow and stored in DB"
-}
