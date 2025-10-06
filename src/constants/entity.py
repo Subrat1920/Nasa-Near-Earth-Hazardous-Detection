@@ -63,3 +63,10 @@ class ModelTrainingEntity:
 class PredictionEntity:
     def __init__(self):
         self.predict_table_name: str = 'prediction_table'
+
+class AsteroidRiskAnalysisEntity:
+    def __init__(self):
+        self.RISK_ANALYSIS_TABLE_NAME: str = 'risk_analysis'
+        self.COLS_SHOWS: list = ['id','davg_m','mass_kg','impact_energy_j','Enorm','Rmoid_norm','Phazardous', 'RiskScore_raw', 'RiskScorenorm','RiskCategory']
+        self.MANUAL_WEIGHTS: list = [0.4, 0.4, 0.2]
+
