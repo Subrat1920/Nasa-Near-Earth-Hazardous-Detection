@@ -45,6 +45,8 @@ artifacts
 # Unit test / coverage reports
 htmlcov/
 .tox/
+commit history.txt
+commit history.txt
 .nox/
 .coverage
 .coverage.*
