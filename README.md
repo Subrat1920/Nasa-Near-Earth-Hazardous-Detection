@@ -71,8 +71,7 @@ It automates **data ingestion, preprocessing, model training, monitoring, and dr
 - **Database**: PostgreSQL  
 - **Machine Learning**: scikit-learn, imbalanced-learn (SMOTE)  
 - **Experiment Tracking**: MLflow (integrated with DAGsHub)  
-- **Monitoring & Visualization**: Grafana  
-- **Alerts**: Email notifications + Grafana alerts  
+- **Monitoring & Visualization**: Grafana   
 
 ---
 
@@ -107,17 +106,13 @@ It automates **data ingestion, preprocessing, model training, monitoring, and dr
 - Weekly scheduled GitHub Action.  
 - Drift metrics computed & logged in PostgreSQL.  
 - Results visualized in Grafana.  
-
-### 7. Notifications  
-- **Email alerts** triggered if drift detected.  
-- **Grafana notification channels** enabled for anomalies.  
+  
 
 ---
 
 ## 🌳 Repository Structure  
 
 ```
-├── 📁 .git/ 🚫 (auto-hidden)
 ├── 📁 .github/
 │   └── 📁 workflows/
 │       ├── ⚙️ continous_integration.yml
@@ -164,7 +159,6 @@ It automates **data ingestion, preprocessing, model training, monitoring, and dr
 │   ├── 🐍 __init__.py
 │   ├── 🐍 test_data_ingestion.py
 │   └── 🐍 test_utils.py
-├── 🚫 .gitignore
 ├── 📜 LICENSE
 ├── 📖 README.md
 ├── 🐍 app.py
@@ -205,7 +199,8 @@ It automates **data ingestion, preprocessing, model training, monitoring, and dr
 
 **Subrat Mishra**  
 
-[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-blue?style=flat&logo=internet-explorer)](https://mishra-subrat.framer.website)  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/subrat1920/)  [![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/Subrat1920)  [![Medium](https://img.shields.io/badge/Medium-Read-black?style=flat&logo=medium)](https://medium.com/@subrat1920)  
+[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-blue?style=flat&logo=internet-explorer)](https://mishra-subrat.framer.website)  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/subrat1920/)  [![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/Subrat1920)  [![Medium](https://img.shields.io/badge/Medium-Read-black?style=flat&logo=medium)]([https://medium.com/@subrat1920](https://medium.com/@subrat1920/1671404ef449)  
 ---
+
 
 
