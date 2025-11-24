@@ -1,6 +1,49 @@
 # 🚀 NASA NEO Hazard Classification  
 
-[![Data Pusher](https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/data_pusher.yml?branch=main&logo=github)](https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/blob/main/.github/workflows/data_pusher.yml)  [![Predict Fresh Data](https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/predict.yml?branch=main&logo=github)](https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/blob/main/.github/workflows/predict.yml)  [![Data Drift Check](https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/data_drift_check.yml?branch=main&logo=github)](https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/blob/main/.github/workflows/data_drift_check.yml)  [![MLflow Tracking](https://img.shields.io/badge/MLflow-Tracking-blue?logo=mlflow)]([https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection](https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection.mlflow/#/experiments/8?searchFilter=&orderByKey=attributes.start_time&orderByAsc=false&startTime=ALL&lifecycleFilter=Active&modelVersionFilter=All+Runs&datasetsFilter=W10=))  ![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue?logo=postgresql)  ![Grafana]([https://img.shields.io/badge/Monitoring-Grafana-orange?logo=grafana](https://subrat1920.grafana.net/public-dashboards/888774ac60ce422fb3f0abb526512867))  ![Python](https://img.shields.io/badge/Python-3.10+-yellow?logo=python)  ![License](https://img.shields.io/badge/License-NonCommercial-orange)
+<p align="center">
+
+  <!-- GitHub Actions -->
+  <a href="https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/data_pusher.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/data_pusher.yml?branch=main&label=Data%20Pusher&logo=github" />
+  </a>
+
+  <a href="https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/predict.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/predict.yml?branch=main&label=Predict%20Fresh%20Data&logo=github" />
+  </a>
+
+  <a href="https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/data_drift_check.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/data_drift_check.yml?branch=main&label=Data%20Drift%20Check&logo=github" />
+  </a>
+
+  <a href="https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/continous_integration.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/continous_integration.yml?branch=main&label=Continuous%20Integration&logo=github" />
+  </a>
+
+  <a href="https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/actions/workflows/auto_risk_analysis.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Subrat1920/Nasa-Near-Earth-Hazardous-Detection/auto_risk_analysis.yml?branch=main&label=Auto%20Risk%20Analysis&logo=github" />
+  </a>
+
+  <!-- MLflow -->
+  <a href="https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection.mlflow/#/experiments/8">
+    <img src="https://img.shields.io/badge/MLflow-Tracking-blue?logo=mlflow" />
+  </a>
+
+  <!-- PostgreSQL -->
+  <img src="https://img.shields.io/badge/Database-PostgreSQL-blue?logo=postgresql" />
+
+  <!-- Grafana -->
+  <a href="https://subrat1920.grafana.net/public-dashboards/888774ac60ce422fb3f0abb526512867">
+    <img src="https://img.shields.io/badge/Monitoring-Grafana-orange?logo=grafana" />
+  </a>
+
+  <!-- Python -->
+  <img src="https://img.shields.io/badge/Python-3.10+-yellow?logo=python" />
+
+  <!-- License -->
+  <img src="https://img.shields.io/badge/License-NonCommercial-orange" />
+
+</p>
+
  
 
 This project builds a **production-grade ML pipeline** to classify **Near-Earth Objects (NEOs)** as *hazardous* or *non-hazardous*.  
@@ -164,4 +207,5 @@ It automates **data ingestion, preprocessing, model training, monitoring, and dr
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-Visit-blue?style=flat&logo=internet-explorer)](https://mishra-subrat.framer.website)  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/subrat1920/)  [![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/Subrat1920)  [![Medium](https://img.shields.io/badge/Medium-Read-black?style=flat&logo=medium)](https://medium.com/@subrat1920)  
 ---
+
 
