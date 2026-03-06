@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Weekly Asteroid Report</title>
+</head>
+
+<body style="font-family:Arial; background:#f4f6f9; padding:20px;">
+
+<div style="max-width:600px; margin:auto; background:white; padding:20px; border-radius:8px; border:1px solid #ddd;">
+
+<h2 style="color:#1d3557;">📊 Weekly Asteroid Monitoring Report</h2>
+
+<p>Hello,</p>
+
+<p>Here is the weekly summary of asteroid activity detected by the monitoring system.</p>
+
+<table style="width:100%; border-collapse:collapse; margin-top:15px;">
+
+<tr>
+<td style="padding:8px; border-bottom:1px solid #eee;"><strong>Total Asteroids Analyzed</strong></td>
+<td style="padding:8px; border-bottom:1px solid #eee;">{{total_asteroids}}</td>
+</tr>
+
+<tr>
+<td style="padding:8px; border-bottom:1px solid #eee;"><strong>Hazardous Asteroids</strong></td>
+<td style="padding:8px; border-bottom:1px solid #eee;">{{hazardous_count}}</td>
+</tr>
+
+<tr>
+<td style="padding:8px; border-bottom:1px solid #eee;"><strong>Sentry Objects</strong></td>
+<td style="padding:8px; border-bottom:1px solid #eee;">{{sentry_count}}</td>
+</tr>
+
+<tr>
+<td style="padding:8px; border-bottom:1px solid #eee;"><strong>High Risk Objects</strong></td>
+<td style="padding:8px; border-bottom:1px solid #eee;">{{high_risk}}</td>
+</tr>
+
+<tr>
+<td style="padding:8px;"><strong>Data Drift Status</strong></td>
+<td style="padding:8px;">{{drift_status}}</td>
+</tr>
+
+</table>
+
+<a href="{{dashboard_link}}" style="display:inline-block; margin-top:15px; padding:10px 20px; background:#457b9d; color:white; text-decoration:none; border-radius:5px;">
+Open Monitoring Dashboard
+</a>
+
+<p style="margin-top:25px; font-size:12px; color:#777;">
+This automated report summarizes asteroid monitoring activity and system status.
+</p>
+
+</div>
+
+</body>
+</html>
+
