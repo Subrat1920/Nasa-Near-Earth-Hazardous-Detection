@@ -28,4 +28,4 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ALERTING_EMAIL_PASSWORD: ${{ secrets.ALERTING_EMAIL_PASSWORD }}
         run: |
-          python -m alerts.alert_system.sucess_alert.py
+          python -m alerts.alert_system.sucess_alert
