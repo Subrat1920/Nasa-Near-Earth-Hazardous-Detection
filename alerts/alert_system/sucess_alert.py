@@ -4,6 +4,7 @@ import smtplib
 from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from pathlib import Path
 
 import pandas as pd
 from sqlalchemy import create_engine
@@ -38,7 +39,8 @@ class AlertEmailService:
 
     def load_template(self):
         """Load HTML email template"""
-        with open(r"alerts\templates\success_email_template.html", "r", encoding="utf-8") as f:
+        template_path = Path("alerts/templates/success_email_template.html")
+        with open(template_path, "r", encoding="utf-8") as f:
             return f.read()
 
     def render_template(self, html_template, risky_asteroids, summary):
