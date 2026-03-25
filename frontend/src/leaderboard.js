@@ -76,7 +76,10 @@ export async function loadLeaderboard() {
 function _rowHTML(a) {
   const riskPct = a.risk_score_manual != null ? (a.risk_score_manual * 100).toFixed(1) : null;
   const riskCls = _riskClass(a.risk_category_manual);
-  const hazard  = a.is_potentially_hazardous
+  // Override NASA's strict native status if the AI predictively overrides it to High/Medium Risk (> 50%)
+  const isHazardousFlag = a.is_potentially_hazardous || (a.risk_score_manual >= 0.5);
+
+  const hazard  = isHazardousFlag
     ? '<span class="badge-pho">🔴 Yes</span>'
     : '<span class="badge-safe">🔵 No</span>';
 

@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="NASA NEO Interactive Universe API",
     description=(
-        "Read-only API serving 32,001+ unique Near-Earth Asteroids from NeonDB. "
+        "Read-only API serving 32,001+ unique Near-Earth Asteroids from PHO Database. "
         "Powers the interactive 3D Orrery, Explorer, Leaderboard, and MLOps dashboard."
     ),
     version="2.0.0",
