@@ -8,11 +8,16 @@ import { gsap } from 'gsap';
 
 let compareQueue = [];    // ids queued for comparison
 let onCompareChange = null;
+let onCloseChange = null;
 
-export function initExplorer(onCompareCb) {
+export function initExplorer(onCompareCb, onCloseCb) {
   onCompareChange = onCompareCb;
+  onCloseChange = onCloseCb;
 
-  document.getElementById('explorer-close').addEventListener('click', closeExplorer);
+  document.getElementById('explorer-close').addEventListener('click', () => {
+    closeExplorer();
+    onCloseChange?.();
+  });
   document.getElementById('ex-compare-btn').addEventListener('click', () => {
     const idText = document.getElementById('explorer-id').textContent;
     const id = parseInt(idText.replace(/\D/g, ''));
