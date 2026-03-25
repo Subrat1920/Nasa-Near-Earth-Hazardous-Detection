@@ -12,6 +12,7 @@
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { gsap } from 'gsap';
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const COLORS = {
@@ -354,14 +355,32 @@ export function focusAsteroid(asteroidId) {
   _showOrbitRing(idx);
   onSelectCallback?.(asteroidData[idx]);
 
-  // Move camera to face the asteroid
+  // Move camera to smoothly face the asteroid
   const a = asteroidData[idx];
   const target = new THREE.Vector3(
     a.orbitR * Math.cos(a.angle) * Math.cos(a.incl),
     a.orbitR * Math.sin(a.incl),
     a.orbitR * Math.sin(a.angle) * Math.cos(a.incl),
   );
-  controls.target.lerp(target, 1);
+  gsap.to(controls.target, {
+    x: target.x, y: target.y, z: target.z,
+    duration: 0.8, ease: 'power2.out'
+  });
+}
+
+// ── Reset camera to Earth ──────────────────────────────────────────────────
+export function resetCamera() {
+  if (selectedId >= 0) {
+    _highlightAsteroid(selectedId, false);
+    selectedId = -1;
+  }
+  _removeOrbitRing();
+  
+  // Smoothly pan target back to origin (Earth)
+  gsap.to(controls.target, {
+    x: 0, y: 0, z: 0,
+    duration: 1.0, ease: 'power2.inOut'
+  });
 }
 
 // ── Render Loop ────────────────────────────────────────────────────────────

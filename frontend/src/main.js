@@ -5,7 +5,7 @@
 
 import './style.css';
 import { pingHealth, fetchStats, fetchAllAsteroids, connectLiveWS } from './api.js';
-import { initOrrery, addAsteroidBatch, addSingleAsteroid, setFilter, focusAsteroid } from './orrery.js';
+import { initOrrery, addAsteroidBatch, addSingleAsteroid, setFilter, focusAsteroid, resetCamera } from './orrery.js';
 import { initExplorer, openExplorer, closeExplorer, getCompareQueue, syncCompareFromExplorer } from './explorer.js';
 import { initLeaderboard, loadLeaderboard } from './leaderboard.js';
 import { initComparator, addToCompare, renderComparator } from './comparator.js';
@@ -110,12 +110,17 @@ async function bootstrap() {
   loadingBar.style.width = '15%';
 
   // Init sub-modules
-  initExplorer((queue) => {
-    // Called when user clicks "Add to Compare" in Explorer
-    if (queue.length > 0) {
-      addToCompare(queue[queue.length - 1]);
+  initExplorer(
+    (queue) => {
+      // Called when user clicks "Add to Compare" in Explorer
+      if (queue.length > 0) {
+        addToCompare(queue[queue.length - 1]);
+      }
+    },
+    () => {
+      resetCamera();
     }
-  });
+  );
   initLeaderboard();
   initComparator();
 
