@@ -324,24 +324,64 @@ a { color: var(--accent); text-decoration: none; }
 .drift-status-mod  { color: var(--sentry); }
 
 /* ══════════════════════════════════════════════════════════
-   EXPLORER PANEL
+   ARCHITECTURE PIPELINE
 ══════════════════════════════════════════════════════════ */
-#explorer-panel {
+.arch-pipeline {
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px; padding: 0 32px 32px; flex-wrap: wrap;
+}
+.arch-node {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; width: 170px; text-align: center; cursor: pointer;
+  transition: all 0.2s; position: relative;
+}
+.arch-node:hover, .arch-node.active {
+  background: var(--accent-glow); border-color: var(--accent); transform: translateY(-4px);
+}
+
+/* Downward arrow for active parent nodes */
+.arch-node[data-stage]::after {
+  content: "▼";
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  color: var(--accent);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+}
+.arch-node[data-stage].active::after {
+  opacity: 1;
+  bottom: -28px;
+}
+
+.node-icon { font-size: 2rem; margin-bottom: 12px; }
+.node-title { font-family: var(--font-head); font-size: 0.75rem; color: var(--text); margin-bottom: 6px; letter-spacing: 0.05em; }
+.node-sub { font-size: 0.65rem; color: var(--muted); }
+.arch-arrow { color: var(--accent); font-size: 1.2rem; opacity: 0.4; font-family: var(--font-mono); }
+
+/* ══════════════════════════════════════════════════════════
+   SIDE PANELS (EXPLORER & ARCHITECTURE)
+══════════════════════════════════════════════════════════ */
+#explorer-panel, #arch-panel {
   width: 340px; flex-shrink: 0;
   background: var(--glass); backdrop-filter: blur(16px);
   border-left: 1px solid var(--border);
   overflow-y: auto; position: relative;
   transition: width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
 }
-#explorer-panel.panel-hidden { width: 0; opacity: 0; overflow: hidden; }
-#explorer-close {
+#explorer-panel.panel-hidden, #arch-panel.panel-hidden { width: 0; opacity: 0; overflow: hidden; }
+#explorer-close, #arch-close {
   position: sticky; top: 0; left: 0; float: right;
   margin: 12px 12px 0 0; padding: 4px 8px;
   background: var(--surface2); border: 1px solid var(--border);
   border-radius: 6px; font-size: 0.8rem; color: var(--muted);
   z-index: 10;
 }
-#explorer-content { padding: 16px 20px 32px; }
+#explorer-content, #arch-content { padding: 16px 20px 32px; }
 .explorer-badge {
   display: inline-block; padding: 3px 10px; border-radius: 99px;
   font-family: var(--font-head); font-size: 0.65rem; letter-spacing: 0.05em;
