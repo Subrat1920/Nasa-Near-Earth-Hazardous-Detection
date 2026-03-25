@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Interactive 3D visualization of 32,001 Near-Earth Asteroids powered by NASA data and machine learning." />
+    <title>NASA NEO Universe — Near-Earth Asteroid Explorer</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+
+    <!-- ═══ LOADING SCREEN ════════════════════════════════════════════════ -->
+    <div id="loading-screen">
+      <div class="loading-earth"></div>
+      <div class="loading-content">
+        <h1 class="loading-title">NASA NEO UNIVERSE</h1>
+        <p class="loading-subtitle">Connecting to Mission Control...</p>
+        <div class="loading-bar-wrap">
+          <div class="loading-bar" id="loading-bar"></div>
+        </div>
+        <p class="loading-count" id="loading-count">Initialising...</p>
+      </div>
+    </div>
+
+    <!-- ═══ APP SHELL ═════════════════════════════════════════════════════ -->
+    <div id="app" style="display:none">
+
+      <!-- Header -->
+      <header id="header">
+        <div class="header-brand">
+          <span class="header-logo">☄</span>
+          <span class="header-title">NASA NEO UNIVERSE</span>
+        </div>
+        <div class="header-stats" id="header-stats">
+          <div class="stat-chip" id="chip-unique">
+            <span class="chip-val">—</span>
+            <span class="chip-lbl">Unique Asteroids</span>
+          </div>
+          <div class="stat-chip pho" id="chip-pho">
+            <span class="chip-val">—</span>
+            <span class="chip-lbl">Hazardous (PHO)</span>
+          </div>
+          <div class="stat-chip sentry" id="chip-sentry">
+            <span class="chip-val">—</span>
+            <span class="chip-lbl">Sentry Objects</span>
+          </div>
+          <div class="stat-chip speed" id="chip-speed">
+            <span class="chip-val">—</span>
+            <span class="chip-lbl">Max Velocity km/s</span>
+          </div>
+        </div>
+        <div class="header-live" id="ws-badge">
+          <span class="pulse-dot"></span> LIVE
+        </div>
+      </header>
+
+      <!-- Layout -->
+      <div id="layout">
+
+        <!-- Sidebar Nav -->
+        <nav id="sidebar">
+          <button class="nav-btn active" id="nav-orrery"   data-view="orrery"      title="3D Orrery">
+            <span class="nav-icon">🌌</span><span class="nav-label">Orrery</span>
+          </button>
+          <button class="nav-btn" id="nav-leaderboard" data-view="leaderboard" title="Leaderboard">
+            <span class="nav-icon">🏆</span><span class="nav-label">Leaderboard</span>
+          </button>
+          <button class="nav-btn" id="nav-compare"     data-view="compare"     title="Compare Asteroids">
+            <span class="nav-icon">⚖️</span><span class="nav-label">Compare</span>
+          </button>
+          <button class="nav-btn" id="nav-mlops"       data-view="mlops"       title="MLOps Dashboard">
+            <span class="nav-icon">🧠</span><span class="nav-label">MLOps</span>
+          </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main id="main-area">
+
+          <!-- 3D Orrery View -->
+          <section id="view-orrery" class="view active">
+            <canvas id="orrery-canvas"></canvas>
+
+            <!-- Filter Bar -->
+            <div id="filter-bar">
+              <span class="filter-label">SHOW:</span>
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="pho">🔴 PHO Only</button>
+              <button class="filter-btn" data-filter="sentry">🟠 Sentry Only</button>
+              <button class="filter-btn" data-filter="safe">🔵 Safe Only</button>
+              <div class="filter-sep"></div>
+              <span class="filter-label">VISIBLE:</span>
+              <span id="visible-count" class="filter-count">—</span>
+            </div>
+
+            <!-- Legend -->
+            <div id="legend">
+              <div class="legend-item"><span class="dot pho"></span> Potentially Hazardous</div>
+              <div class="legend-item"><span class="dot sentry"></span> Sentry Object</div>
+              <div class="legend-item"><span class="dot both"></span> PHO + Sentry</div>
+              <div class="legend-item"><span class="dot safe"></span> Safe</div>
+            </div>
+
+            <!-- Tooltip on hover -->
+            <div id="asteroid-tooltip" class="hidden">
+              <span id="tooltip-name"></span>
+              <span id="tooltip-type"></span>
+            </div>
+          </section>
+
+          <!-- Leaderboard View -->
+          <section id="view-leaderboard" class="view">
+            <div class="view-header">
+              <h2>🏆 Asteroid Leaderboard</h2>
+              <p class="view-sub">Ranked by risk, velocity, proximity, or size</p>
+            </div>
+            <div id="leaderboard-controls">
+              <div class="ctrl-group">
+                <span class="ctrl-label">Sort by:</span>
+                <button class="lb-sort active" data-sort="risk">Risk Score</button>
+                <button class="lb-sort" data-sort="velocity">Velocity</button>
+                <button class="lb-sort" data-sort="closest">Closest Miss</button>
+                <button class="lb-sort" data-sort="size">Largest</button>
+              </div>
+              <div class="ctrl-group">
+                <span class="ctrl-label">Top:</span>
+                <button class="lb-top active" data-top="10">10</button>
+                <button class="lb-top" data-top="50">50</button>
+                <button class="lb-top" data-top="100">100</button>
+                <button class="lb-top" data-top="1000">1000</button>
+              </div>
+              <div class="ctrl-group">
+                <button class="lb-filter" data-filter="all">All</button>
+                <button class="lb-filter" data-filter="pho">PHO Only</button>
+                <button class="lb-filter" data-filter="sentry">Sentry Only</button>
+              </div>
+            </div>
+            <div id="leaderboard-table-wrap">
+              <table id="leaderboard-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Diameter (km)</th>
+                    <th>Velocity (km/s)</th>
+                    <th>Miss Dist (km)</th>
+                    <th>Risk</th>
+                    <th>Category</th>
+                    <th>Hazardous</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Compare View -->
+          <section id="view-compare" class="view">
+            <div class="view-header">
+              <h2>⚖️ Asteroid Comparator</h2>
+              <p class="view-sub">Select asteroids in the Orrery or Leaderboard, then compare them here.</p>
+            </div>
+            <div id="compare-slots" class="compare-grid"></div>
+            <div id="compare-chart-wrap">
+              <canvas id="compare-radar"></canvas>
+            </div>
+            <div id="compare-empty" class="empty-state">
+              <p>🔍 No asteroids in the comparison queue.</p>
+              <p>Click <strong>[+ Compare]</strong> on any asteroid to add it here.</p>
+            </div>
+          </section>
+
+          <!-- MLOps View -->
+          <section id="view-mlops" class="view">
+            <div class="view-header">
+              <h2>🧠 MLOps Dashboard</h2>
+              <p class="view-sub">Model training history, data drift, and pipeline health</p>
+            </div>
+            <div id="mlops-grid">
+              <div class="mlops-card" id="mlops-model-card">
+                <h3>Current Model</h3>
+                <div id="mlops-model-info">Loading...</div>
+              </div>
+              <div class="mlops-card" id="mlops-accuracy-card">
+                <h3>Accuracy Over Versions</h3>
+                <canvas id="accuracy-chart"></canvas>
+              </div>
+              <div class="mlops-card wide" id="mlops-drift-card">
+                <h3>Data Drift Detection — Latest Run</h3>
+                <div id="drift-summary"></div>
+                <div id="drift-table-wrap">
+                  <table id="drift-table">
+                    <thead><tr><th>Feature</th><th>Type</th><th>Method</th><th>PSI</th><th>Status</th></tr></thead>
+                    <tbody id="drift-body"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="mlops-card wide" id="mlops-psi-card">
+                <h3>Population Stability Index (PSI)</h3>
+                <canvas id="psi-chart"></canvas>
+              </div>
+            </div>
+          </section>
+
+        </main>
+
+        <!-- Explorer Panel (slides from right on asteroid click) -->
+        <aside id="explorer-panel" class="panel-hidden">
+          <button id="explorer-close">✕</button>
+          <div id="explorer-content">
+            <div class="explorer-badge" id="explorer-badge"></div>
+            <h2 id="explorer-name"></h2>
+            <p class="explorer-id" id="explorer-id"></p>
+
+            <div class="explorer-section">
+              <div class="info-grid">
+                <div class="info-item"><span class="info-lbl">Min Diameter</span><span class="info-val" id="ex-dmin"></span></div>
+                <div class="info-item"><span class="info-lbl">Max Diameter</span><span class="info-val" id="ex-dmax"></span></div>
+                <div class="info-item"><span class="info-lbl">Velocity</span><span class="info-val" id="ex-vel"></span></div>
+                <div class="info-item"><span class="info-lbl">Miss Distance</span><span class="info-val" id="ex-dist"></span></div>
+              </div>
+            </div>
+
+            <div class="explorer-section" id="ex-ml-section">
+              <h4>ML Prediction</h4>
+              <div class="prob-bar-wrap">
+                <div class="prob-bar-label">Hazardous probability</div>
+                <div class="prob-bar-track">
+                  <div class="prob-bar-fill" id="ex-prob-fill"></div>
+                </div>
+                <span class="prob-value" id="ex-prob-val"></span>
+              </div>
+            </div>
+
+            <div class="explorer-section" id="ex-risk-section">
+              <h4>Risk Analysis</h4>
+              <div class="info-grid">
+                <div class="info-item"><span class="info-lbl">Risk Score</span><span class="info-val" id="ex-risk"></span></div>
+                <div class="info-item"><span class="info-lbl">Category</span><span class="info-val" id="ex-rcat"></span></div>
+                <div class="info-item"><span class="info-lbl">Est. Mass</span><span class="info-val" id="ex-mass"></span></div>
+                <div class="info-item"><span class="info-lbl">Impact Energy</span><span class="info-val" id="ex-energy"></span></div>
+              </div>
+            </div>
+
+            <div class="explorer-section">
+              <h4>Close Approach History</h4>
+              <div id="ex-timeline"></div>
+            </div>
+
+            <div class="explorer-actions">
+              <a id="ex-jpl-link" href="#" target="_blank" class="btn-secondary">🔗 NASA JPL</a>
+              <button class="btn-primary" id="ex-compare-btn">+ Add to Compare</button>
+            </div>
+          </div>
+        </aside>
+
+      </div><!-- /#layout -->
+    </div><!-- /#app -->
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
