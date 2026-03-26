@@ -194,10 +194,10 @@ async def get_asteroid(asteroid_id: int, pool=Depends(get_pool)):
 # GET /api/leaderboard
 # ──────────────────────────────────────────────
 _SORT_OPTIONS = {
-    "risk":     ("r.\"RiskScorenormManual\"", "DESC"),
-    "velocity": ("t.relative_velocity_kps",  "DESC"),
-    "closest":  ("t.miss_distance_km",        "ASC"),
-    "size":     ("t.max_diameter_km",          "DESC"),
+    "risk":     ("r.\"RiskScorenormManual\"", "DESC NULLS LAST"),
+    "velocity": ("t.relative_velocity_kps",   "DESC NULLS LAST"),
+    "closest":  ("t.miss_distance_km",        "ASC NULLS LAST"),
+    "size":     ("t.max_diameter_km",         "DESC NULLS LAST"),
 }
 
 
@@ -207,6 +207,7 @@ async def get_leaderboard(
     top: int = Query(100, ge=10, le=1000),
     hazardous: bool = Query(None),
     sentry: bool = Query(None),
+    name: str = Query(None, description="Search by asteroid name"),
     pool=Depends(get_pool),
 ):
     sort_col, sort_dir = _SORT_OPTIONS[by]
@@ -215,54 +216,32 @@ async def get_leaderboard(
         pho_filter += f" AND t.is_potentially_hazardous = {str(hazardous).lower()}"
     if sentry is not None:
         pho_filter += f" AND t.is_sentry_object = {str(sentry).lower()}"
+    if name:
+        safe_name = name.replace("'", "''").strip()
+        pho_filter += f" AND t.name ILIKE '%{safe_name}%'"
 
-    # For "risk" sort, join risk_analysis; others use only train_neo
-    if by == "risk":
-        query = f"""
-            WITH latest AS (
-                SELECT DISTINCT ON (id)
-                    id, name, min_diameter_km, max_diameter_km,
-                    relative_velocity_kps, miss_distance_km,
-                    is_potentially_hazardous, is_sentry_object
-                FROM train_neo
-                ORDER BY id, epoch_date_close_approach DESC
-            )
-            SELECT
-                ROW_NUMBER() OVER (ORDER BY {sort_col} {sort_dir}) AS rank,
-                t.id, t.name, t.min_diameter_km, t.max_diameter_km,
-                t.relative_velocity_kps, t.miss_distance_km,
-                t.is_potentially_hazardous, t.is_sentry_object,
-                r."RiskScorenormManual" AS risk_score_manual,
-                r."RiskCategoryManual"  AS risk_category_manual
-            FROM latest t
-            JOIN risk_analysis r ON r.id = t.id
-            WHERE 1=1 {pho_filter}
-            ORDER BY {sort_col} {sort_dir}
-            LIMIT {top}
-        """
-    else:
-        query = f"""
-            WITH latest AS (
-                SELECT DISTINCT ON (id)
-                    id, name, min_diameter_km, max_diameter_km,
-                    relative_velocity_kps, miss_distance_km,
-                    is_potentially_hazardous, is_sentry_object
-                FROM train_neo
-                ORDER BY id, epoch_date_close_approach DESC
-            )
-            SELECT
-                ROW_NUMBER() OVER (ORDER BY {sort_col} {sort_dir}) AS rank,
-                t.id, t.name, t.min_diameter_km, t.max_diameter_km,
-                t.relative_velocity_kps, t.miss_distance_km,
-                t.is_potentially_hazardous, t.is_sentry_object,
-                r."RiskScorenormManual" AS risk_score_manual,
-                r."RiskCategoryManual"  AS risk_category_manual
-            FROM latest t
-            LEFT JOIN risk_analysis r ON r.id = t.id
-            WHERE 1=1 {pho_filter}
-            ORDER BY {sort_col} {sort_dir}
-            LIMIT {top}
-        """
+    query = f"""
+        WITH latest AS (
+            SELECT DISTINCT ON (id)
+                id, name, min_diameter_km, max_diameter_km,
+                relative_velocity_kps, miss_distance_km,
+                is_potentially_hazardous, is_sentry_object
+            FROM train_neo
+            ORDER BY id, epoch_date_close_approach DESC
+        )
+        SELECT
+            ROW_NUMBER() OVER (ORDER BY {sort_col} {sort_dir}) AS rank,
+            t.id, t.name, t.min_diameter_km, t.max_diameter_km,
+            t.relative_velocity_kps, t.miss_distance_km,
+            t.is_potentially_hazardous, t.is_sentry_object,
+            r."RiskScorenormManual" AS risk_score_manual,
+            r."RiskCategoryManual"  AS risk_category_manual
+        FROM latest t
+        LEFT JOIN risk_analysis r ON r.id = t.id
+        WHERE 1=1 {pho_filter}
+        ORDER BY {sort_col} {sort_dir}
+        LIMIT {top}
+    """
 
     async with pool.acquire() as conn:
         rows = await conn.fetch(query)
