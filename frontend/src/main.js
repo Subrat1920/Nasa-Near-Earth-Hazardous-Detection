@@ -137,6 +137,17 @@ async function bootstrap() {
   // Fetch all 32,001 asteroids via standard JSON endpoint
   try {
     loadingCount.textContent = 'Downloading asteroid catalog… (3MB)';
+    loadingCount.textContent = "Just a moment — we're preparing your experience.";
+
+    // this is the additional
+    setTimeout(() => {
+      loadingCount.textContent = "Still working — thanks for your patience.";
+    }, 4000);
+
+    setTimeout(() => {
+      loadingCount.textContent = "Processing asteroid data — this can take a few extra seconds.";
+    }, 8000);
+
     const allAsteroids = await fetchAllAsteroids();
     
     // Send to WebGL scene
