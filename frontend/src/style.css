@@ -213,6 +213,13 @@ a { color: var(--accent); text-decoration: none; }
 .lb-sort.active, .lb-top.active, .lb-filter.active {
   background: var(--accent-glow); border-color: var(--accent); color: var(--accent);
 }
+.lb-search-input {
+  padding: 4px 12px; border-radius: 99px; font-size: 0.72rem;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  outline: none; transition: all 0.2s; width: 160px; font-family: var(--font-body);
+}
+.lb-search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+.lb-search-input::placeholder { color: var(--muted); }
 #leaderboard-table-wrap {
   padding: 0 32px 32px; overflow: auto;
   max-height: calc(100vh - var(--header-h) - 180px);

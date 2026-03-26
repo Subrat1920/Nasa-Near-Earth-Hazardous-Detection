@@ -13,6 +13,7 @@ Chart.register(LineController, BarController, CategoryScale, LinearScale,
 
 let accuracyChart = null;
 let psiChart      = null;
+let chi2Chart     = null;
 
 export async function loadMLOps() {
   try {
@@ -118,33 +119,69 @@ function _renderDrift(drift) {
 
   // PSI bar chart
   const psiData = drift.features.filter(f => f.psi != null);
-  if (!psiData.length) return;
-
-  if (psiChart) { psiChart.destroy(); psiChart = null; }
-  const ctx = document.getElementById('psi-chart').getContext('2d');
-  psiChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: psiData.map(f => f.feature),
-      datasets: [{
-        label: 'PSI',
-        data: psiData.map(f => f.psi),
-        backgroundColor: psiData.map(f =>
-          f.drift_status === 'High Drift' ? 'rgba(255,59,59,0.7)' :
-          f.drift_status === 'Moderate Drift' ? 'rgba(255,165,0,0.7)' :
-          'rgba(0,212,255,0.5)'
-        ),
-        borderRadius: 4,
-      }],
-    },
-    options: {
-      indexAxis: 'y',
-      animation: { duration: 600 },
-      scales: {
-        x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-        y: { ticks: { color: '#e2e8f0', font: { family: 'JetBrains Mono', size: 10 } }, grid: { display: false } },
+  if (psiData.length) {
+    if (psiChart) { psiChart.destroy(); psiChart = null; }
+    const ctx = document.getElementById('psi-chart').getContext('2d');
+    psiChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: psiData.map(f => f.feature),
+        datasets: [{
+          label: 'PSI',
+          data: psiData.map(f => f.psi),
+          backgroundColor: psiData.map(f =>
+            f.drift_status.includes('High') ? 'rgba(255,59,59,0.7)' :
+            f.drift_status.includes('Moderate') ? 'rgba(255,165,0,0.7)' :
+            'rgba(0,212,255,0.5)'
+          ),
+          borderRadius: 4,
+        }],
       },
-      plugins: { legend: { display: false } },
-    },
-  });
+      options: {
+        indexAxis: 'y',
+        animation: { duration: 600 },
+        scales: {
+          x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: { ticks: { color: '#e2e8f0', font: { family: 'JetBrains Mono', size: 10 } }, grid: { display: false } },
+        },
+        plugins: { legend: { display: false } },
+      },
+    });
+  }
+
+  // Chi2 bar chart
+  const chi2Data = drift.features.filter(f => f.chi2_p_value != null);
+  if (chi2Data.length) {
+    if (chi2Chart) { chi2Chart.destroy(); chi2Chart = null; }
+    const ctx2 = document.getElementById('chi2-chart').getContext('2d');
+    chi2Chart = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: chi2Data.map(f => f.feature),
+        datasets: [{
+          label: 'P-Value',
+          data: chi2Data.map(f => f.chi2_p_value),
+          backgroundColor: chi2Data.map(f =>
+            f.chi2_p_value < 0.05 ? 'rgba(255,59,59,0.7)' :
+            f.chi2_p_value < 0.1 ? 'rgba(255,165,0,0.7)' :
+            'rgba(0,212,255,0.5)'
+          ),
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        animation: { duration: 600 },
+        scales: {
+          x: { 
+            title: { display: true, text: 'P-Value (Lower is worse < 0.05)', color: '#64748b', font: {size: 10} },
+            ticks: { color: '#64748b' }, 
+            grid: { color: 'rgba(255,255,255,0.05)' } 
+          },
+          y: { ticks: { color: '#e2e8f0', font: { family: 'JetBrains Mono', size: 10 } }, grid: { display: false } },
+        },
+        plugins: { legend: { display: false } },
+      },
+    });
+  }
 }

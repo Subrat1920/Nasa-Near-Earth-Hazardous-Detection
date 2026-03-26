@@ -38,10 +38,11 @@ export async function fetchAsteroid(id) {
 }
 
 // ── Leaderboard ──────────────────────────────────────────────────────────────
-export async function fetchLeaderboard({ by = 'risk', top = 100, hazardous = null, sentry = null } = {}) {
+export async function fetchLeaderboard({ by = 'risk', top = 100, hazardous = null, sentry = null, name = null } = {}) {
   const params = new URLSearchParams({ by, top });
   if (hazardous !== null) params.set('hazardous', hazardous);
   if (sentry !== null)    params.set('sentry', sentry);
+  if (name)               params.set('name', name);
   const res = await fetch(`${API_BASE}/api/leaderboard?${params}`);
   if (!res.ok) throw new Error('Leaderboard fetch failed');
   return res.json();

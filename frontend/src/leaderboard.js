@@ -9,14 +9,22 @@ import { openExplorer }    from './explorer.js';
 let currentSort   = 'risk';
 let currentTop    = 100;
 let currentFilter = 'all';  // 'all' | 'pho' | 'sentry'
+let currentName   = null;
 
 export function initLeaderboard() {
   // Sort buttons
   document.querySelectorAll('.lb-sort').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.lb-sort').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentSort = btn.dataset.sort;
+      if (btn.classList.contains('active') && btn.dataset.sort !== 'risk') {
+        // Toggle off if clicking the currently active sort
+        btn.classList.remove('active');
+        document.querySelector('.lb-sort[data-sort="risk"]').classList.add('active');
+        currentSort = 'risk';
+      } else {
+        document.querySelectorAll('.lb-sort').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSort = btn.dataset.sort;
+      }
       loadLeaderboard();
     });
   });
@@ -34,12 +42,49 @@ export function initLeaderboard() {
   // Filter buttons
   document.querySelectorAll('.lb-filter').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.lb-filter').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = btn.dataset.filter;
+      if (btn.classList.contains('active') && btn.dataset.filter !== 'all') {
+        // Toggle off if clicking the currently active filter
+        btn.classList.remove('active');
+        document.querySelector('.lb-filter[data-filter="all"]').classList.add('active');
+        currentFilter = 'all';
+      } else {
+        document.querySelectorAll('.lb-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+      }
       loadLeaderboard();
     });
   });
+
+  // Search input
+  const searchInput = document.getElementById('lb-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const newName = e.target.value.trim() || null;
+      
+      // Auto-clear categorical filters when initiating or changing a search
+      if (newName && newName !== currentName) {
+        document.querySelectorAll('.lb-filter').forEach(b => b.classList.remove('active'));
+        document.querySelector('.lb-filter[data-filter="all"]').classList.add('active');
+        currentFilter = 'all';
+        
+        // Disable Sort and Top visual boundaries during active search mapping
+        document.querySelectorAll('.lb-sort, .lb-top').forEach(b => b.classList.remove('active'));
+      }
+      
+      if (!newName && currentName) {
+        // Search cleared natively, revert to default Risk/100
+        document.querySelector('.lb-sort[data-sort="risk"]')?.classList.add('active');
+        document.querySelector('.lb-top[data-top="100"]')?.classList.add('active');
+        currentSort = 'risk';
+        currentTop  = 100;
+      }
+      
+      currentName = newName;
+      clearTimeout(searchInput._timeout);
+      searchInput._timeout = setTimeout(loadLeaderboard, 300);
+    });
+  }
 }
 
 export async function loadLeaderboard() {
@@ -49,6 +94,11 @@ export async function loadLeaderboard() {
   const params = { by: currentSort, top: currentTop };
   if (currentFilter === 'pho')    params.hazardous = true;
   if (currentFilter === 'sentry') params.sentry    = true;
+  
+  if (currentName) {
+    params.name = currentName;
+    params.top = 1000; // Force bypass top 100 filter allowing deep global searching
+  }
 
   try {
     const data = await fetchLeaderboard(params);

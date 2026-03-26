@@ -16,21 +16,21 @@ import { gsap } from 'gsap';
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const COLORS = {
-  pho:    new THREE.Color(0xff3b3b),  // Hazardous
+  pho: new THREE.Color(0xff3b3b),  // Hazardous
   sentry: new THREE.Color(0xffa500),  // Sentry
-  both:   new THREE.Color(0x9b59b6),  // PHO + Sentry
-  safe:   new THREE.Color(0x87ceeb),  // Safe
-  earth:  new THREE.Color(0x1a73e8),
-  orbit:  new THREE.Color(0x00d4ff),
+  both: new THREE.Color(0x9b59b6),  // PHO + Sentry
+  safe: new THREE.Color(0x87ceeb),  // Safe
+  earth: new THREE.Color(0x1a73e8),
+  orbit: new THREE.Color(0x00d4ff),
 };
 
-const MISS_MIN_KM   = 6599;
-const MISS_MAX_KM   = 74794677;
+const MISS_MIN_KM = 6599;
+const MISS_MAX_KM = 74794677;
 // Earth radius + Atmosphere is ~2.24. 
 // Miss distance 6599km is ~1.03 Earth Radii from Earth's center.
 // So mathematically passing at 2.4 units makes it graze the atmosphere realistically.
-const ORBIT_MIN     = 2.4; 
-const ORBIT_MAX     = 48;
+const ORBIT_MIN = 2.4;
+const ORBIT_MAX = 48;
 const MAX_ASTEROIDS = 35000; // headroom for weekly growth
 
 // ── Module State ───────────────────────────────────────────────────────────
@@ -38,19 +38,19 @@ let scene, camera, renderer, controls;
 let instancedMesh;
 let asteroidGroup;      // parent group — rotated as a unit each frame
 let orbitRing = null;   // single reusable orbit ring
-let hoveredId  = -1;
+let hoveredId = -1;
 let selectedId = -1;
 let isTweeningTarget = false;
 let isolatedMode = false;
 
-const asteroidData   = [];   // [{id, name, orbitR, angle, incl, color, ...}, ...]
-const idToIndex      = {};   // {asteroid_id: instance_index}
-const _matrix        = new THREE.Matrix4();
-const _color         = new THREE.Color();
-const _dummy         = new THREE.Object3D();
+const asteroidData = [];   // [{id, name, orbitR, angle, incl, color, ...}, ...]
+const idToIndex = {};   // {asteroid_id: instance_index}
+const _matrix = new THREE.Matrix4();
+const _color = new THREE.Color();
+const _dummy = new THREE.Object3D();
 
 let onSelectCallback = null;   // set by main.js
-let filterMode       = 'all';  // 'all' | 'pho' | 'sentry' | 'safe'
+let filterMode = 'all';  // 'all' | 'pho' | 'sentry' | 'safe'
 let canvas, animId;
 let frameCount = 0;
 
@@ -74,12 +74,12 @@ export function initOrrery(canvasEl, onSelect) {
 
   // Controls
   controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping  = true;
-  controls.dampingFactor  = 0.08;
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
   // Reduce minDistance from 3.0 down to microscopic so camera can get inches away from true-scale rocks
-  controls.minDistance    = 0.02;
-  controls.maxDistance    = 120;
-  controls.autoRotate     = false;
+  controls.minDistance = 0.02;
+  controls.maxDistance = 120;
+  controls.autoRotate = false;
 
   // Stars
   _addStars();
@@ -89,14 +89,14 @@ export function initOrrery(canvasEl, onSelect) {
 
   // Asteroid InstancedMesh (empty, filled as SSE data arrives)
   const geo = new THREE.IcosahedronGeometry(1, 1);
-  
+
   // Custom attribute to pass unique asteroid physics to Shader (Cragginess, Noise Freq, Spin Speed, Visibility(w))
   const shapeArray = new Float32Array(MAX_ASTEROIDS * 4);
   const shapeAttr = new THREE.InstancedBufferAttribute(shapeArray, 4);
   geo.setAttribute('aShape', shapeAttr);
 
   const rockMaterial = new THREE.ShaderMaterial({
-    uniforms: { 
+    uniforms: {
       baseColor: { value: new THREE.Color(0x2d2d30) },
       uTime: { value: 0 }
     },
@@ -185,7 +185,7 @@ export function initOrrery(canvasEl, onSelect) {
 function _addEarth() {
   // Procedural Earth canvas texture
   const size = 512;
-  const cvs  = document.createElement('canvas');
+  const cvs = document.createElement('canvas');
   cvs.width = size * 2; cvs.height = size;
   const ctx = cvs.getContext('2d');
 
@@ -200,13 +200,13 @@ function _addEarth() {
   // Continents (rough shapes for aesthetics)
   ctx.fillStyle = '#2d6a4f';
   const landMasses = [
-    [100,80,220,180],[550,60,140,200],[750,160,90,130],
-    [300,230,180,100],[480,220,100,80],[900,40,80,160],
-    [120,280,80,60],[680,290,120,70],[200,310,60,40],
+    [100, 80, 220, 180], [550, 60, 140, 200], [750, 160, 90, 130],
+    [300, 230, 180, 100], [480, 220, 100, 80], [900, 40, 80, 160],
+    [120, 280, 80, 60], [680, 290, 120, 70], [200, 310, 60, 40],
   ];
-  landMasses.forEach(([x,y,w,h]) => {
+  landMasses.forEach(([x, y, w, h]) => {
     ctx.beginPath();
-    ctx.ellipse(x, y, w/2, h/2, Math.random()*0.5, 0, Math.PI*2);
+    ctx.ellipse(x, y, w / 2, h / 2, Math.random() * 0.5, 0, Math.PI * 2);
     ctx.fill();
   });
 
@@ -233,7 +233,7 @@ function _addEarth() {
 
 // ── Stars ──────────────────────────────────────────────────────────────────
 function _addStars() {
-  const count  = 1200; // Drastically reduce star count
+  const count = 1200; // Drastically reduce star count
   const posArr = new Float32Array(count * 3);
   for (let i = 0; i < count * 3; i++) {
     posArr[i] = (Math.random() - 0.5) * 400;
@@ -259,15 +259,15 @@ function _asteroidSize(minDiam, maxDiam) {
   // This mathematically guarantees size ratios across all asteroids are 100% accurate to each other.
   const trueRelativeSize = (avgDiamKm / 6371.0) * 2.0;
   const uiSize = trueRelativeSize * 70.0;
-  
+
   // Safe limit so the screen doesn't completely turn to rock if a 50km anomaly orbits
   return Math.max(0.015, Math.min(0.8, uiSize));
 }
 
 function _typeColor(pho, sentry) {
   if (pho && sentry) return COLORS.both;
-  if (pho)           return COLORS.pho;
-  if (sentry)        return COLORS.sentry;
+  if (pho) return COLORS.pho;
+  if (sentry) return COLORS.sentry;
   return COLORS.safe;
 }
 
@@ -276,19 +276,19 @@ export function addAsteroidBatch(batch) {
   const startIdx = instancedMesh.count;
 
   batch.forEach((a, i) => {
-    const idx   = startIdx + i;
+    const idx = startIdx + i;
     if (idx >= MAX_ASTEROIDS) return;
 
-    const r     = _orbitRadius(a.miss_distance_km);
-    const size  = _asteroidSize(a.min_diameter_km, a.max_diameter_km);
+    const r = _orbitRadius(a.miss_distance_km);
+    const size = _asteroidSize(a.min_diameter_km, a.max_diameter_km);
     const angle = ((a.id % 1000) / 1000) * Math.PI * 2;
     const color = _typeColor(a.is_potentially_hazardous, a.is_sentry_object);
-    
+
     // Create True 3D Orbital Planes so they go UP and DOWN instead of just left/right!
     // 50% cluster somewhat near Earth's ecliptic plane, 50% are wild flyers (spherical halo)
-    const incl = (Math.random() > 0.5) 
-      ? (Math.random() - 0.5) * 1.5 
-      : Math.acos(2 * Math.random() - 1); 
+    const incl = (Math.random() > 0.5)
+      ? (Math.random() - 0.5) * 1.5
+      : Math.acos(2 * Math.random() - 1);
     const ascNode = Math.random() * Math.PI * 2;
 
     // Build the orbital plane's X and Y basis vectors mathematically
@@ -300,25 +300,25 @@ export function addAsteroidBatch(batch) {
     if (Math.abs(planeNormal.x) > 0.9) uVec.set(0, 1, 0);
     uVec.cross(planeNormal).normalize();
     const vVec = new THREE.Vector3().crossVectors(planeNormal, uVec).normalize();
-    
+
     // Move cleanly via real relative_velocity_kps and randomize direction!
     const vKps = a.relative_velocity_kps || 20.0;
-    const dir = (a.id % 2 === 0) ? 1.0 : -1.0; 
+    const dir = (a.id % 2 === 0) ? 1.0 : -1.0;
     // Reduced speed multiplier by 20% (0.00015 * 0.8 = 0.00012) per request
     const speed = vKps * dir * 0.00012;
-    
+
     // Extreme randomized shape stretching (x, y, z individually morphed)
     let sx = size * (0.6 + Math.random() * 1.8);
     let sy = size * (0.6 + Math.random() * 1.8);
     let sz = size * (0.6 + Math.random() * 1.8);
     // 20% chance to be extremely stretched
-    if (Math.random() > 0.8) sy *= 2.5; 
+    if (Math.random() > 0.8) sy *= 2.5;
     if (Math.random() > 0.8) sx *= 2.0;
 
     const rx = Math.random() * Math.PI * 2;
     const ry = Math.random() * Math.PI * 2;
     const rz = Math.random() * Math.PI * 2;
-    
+
     // Inject standard static data into GPU: x=static_seed, y=crater_scale, z=tumbling_speed, w=visibility(1.0)
     const staticSeed = (a.id % 1000) * 12.34; // Keeps noise structurally locked
     const noiseFreq = 1.5 + Math.random() * 5.0; // wider range of crater densities
@@ -347,7 +347,7 @@ export function addAsteroidBatch(batch) {
   instancedMesh.count = Math.min(startIdx + batch.length, MAX_ASTEROIDS);
   instancedMesh.geometry.getAttribute('aShape').needsUpdate = true;
   instancedMesh.instanceMatrix.needsUpdate = true;
-  instancedMesh.instanceColor.needsUpdate  = true;
+  instancedMesh.instanceColor.needsUpdate = true;
 
   // Update visible count
   document.getElementById('visible-count').textContent =
@@ -361,7 +361,7 @@ export function addSingleAsteroid(a) {
   const badge = document.getElementById('chip-unique');
   if (badge) {
     const val = badge.querySelector('.chip-val');
-    const cur = parseInt(val.textContent.replace(/,/g,'')) || 0;
+    const cur = parseInt(val.textContent.replace(/,/g, '')) || 0;
     val.textContent = (cur + 1).toLocaleString();
     badge.style.borderColor = 'var(--green)';
     setTimeout(() => (badge.style.borderColor = ''), 2000);
@@ -376,9 +376,9 @@ export function setFilter(mode) {
     const a = asteroidData[i];
     if (!a) continue;
     let show = true;
-    if (mode === 'pho')    show = a.is_potentially_hazardous;
+    if (mode === 'pho') show = a.is_potentially_hazardous;
     if (mode === 'sentry') show = a.is_sentry_object;
-    if (mode === 'safe')   show = !a.is_potentially_hazardous && !a.is_sentry_object;
+    if (mode === 'safe') show = !a.is_potentially_hazardous && !a.is_sentry_object;
 
     instancedMesh.setColorAt(i, show ? a.color : new THREE.Color(0x000000));
     if (show) visible++;
@@ -453,25 +453,25 @@ function _setupInteraction() {
   const _vec = new THREE.Vector3();
   function getFatHit(clientX, clientY) {
     const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((clientX - rect.left) / rect.width)  * 2 - 1;
-    mouse.y = -((clientY - rect.top)  / rect.height) * 2 + 1;
+    mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
-    
+
     let closestId = -1;
     let closestDist = Infinity;
     const arr = instancedMesh.instanceMatrix.array;
     const count = instancedMesh.count;
-    
+
     for (let i = 0; i < count; i++) {
       if (isolatedMode && i !== selectedId) continue; // Do not allow clicking hidden asteroids
-      _vec.set(arr[i*16+12], arr[i*16+13], arr[i*16+14]);
+      _vec.set(arr[i * 16 + 12], arr[i * 16 + 13], arr[i * 16 + 14]);
       // Math: Project distance from the camera Ray
       const dSq = raycaster.ray.distanceSqToPoint(_vec);
       const camDistSq = _vec.distanceToSquared(camera.position);
-      
+
       // Hit tolerance strictly scales with distance so it's always easy to click on screen
-      const tolerance = camDistSq * 0.0006; 
-      
+      const tolerance = camDistSq * 0.0006;
+
       if (dSq < tolerance) {
         if (camDistSq < closestDist) {
           closestDist = camDistSq;
@@ -494,10 +494,10 @@ function _setupInteraction() {
       const a = asteroidData[iid];
       tooltipName.textContent = a.name;
       tooltipType.textContent = a.is_potentially_hazardous ? '🔴 HAZARDOUS' : a.is_sentry_object ? '🟠 Sentry' : '🔵 Safe';
-      
+
       const rect = renderer.domElement.getBoundingClientRect();
       tooltip.style.left = (e.clientX - rect.left + 12) + 'px';
-      tooltip.style.top  = (e.clientY - rect.top  + 12) + 'px';
+      tooltip.style.top = (e.clientY - rect.top + 12) + 'px';
       tooltip.classList.remove('hidden');
       renderer.domElement.style.cursor = 'pointer';
     } else {
@@ -529,7 +529,7 @@ function _setupInteraction() {
       _showOrbitRing(selectedId);
       _setIsolatedAsteroid(selectedId);
       onSelectCallback?.(asteroidData[selectedId]);
-      
+
       // Execute the cinematic follow-cam zoom!
       _flyCameraTo(selectedId);
     } else {
@@ -556,10 +556,10 @@ function _flyCameraTo(idx) {
   const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
   // Dynamically calculate camera depth based on the EXACT size of the rock, maintaining perfect frame visibility
   const zoomDepth = Math.max(0.1, a.size * 8.0);
-  
-  if (offset.lengthSq() < 0.01) offset.set(0, 0.5, zoomDepth); 
+
+  if (offset.lengthSq() < 0.01) offset.set(0, 0.5, zoomDepth);
   offset.normalize().multiplyScalar(zoomDepth);
-  
+
   const camPos = new THREE.Vector3().addVectors(targetPos, offset);
 
   isTweeningTarget = true;
@@ -620,7 +620,7 @@ function _animate() {
   // Update real-time Keplerian orbits for all instances directly in the buffer array
   const arr = instancedMesh.instanceMatrix.array;
   const timeMod = frameCount * 0.5; // Orbit time multiplier
-  
+
   // Link uniform time to shader for glowing edge pulse and noise
   instancedMesh.material.uniforms.uTime.value = timeMod;
 
@@ -644,16 +644,16 @@ function _animate() {
       const cAng = a.angle + timeMod * a.speed;
       const cosA = a.orbitR * Math.cos(cAng);
       const sinA = a.orbitR * Math.sin(cAng);
-      
+
       const nx = cosA * a.uVec.x + sinA * a.vVec.x;
       const ny = cosA * a.uVec.y + sinA * a.vVec.y;
       const nz = cosA * a.uVec.z + sinA * a.vVec.z;
-      
+
       // Shift physical camera smoothly alongside the asteroid to lock trailing mode
       camera.position.x += (nx - controls.target.x);
       camera.position.y += (ny - controls.target.y);
       camera.position.z += (nz - controls.target.z);
-      
+
       controls.target.set(nx, ny, nz);
     }
   }

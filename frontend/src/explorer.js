@@ -54,23 +54,29 @@ function _slideClose() {
 }
 
 function _badgeClass(d) {
-  if (d.is_potentially_hazardous && d.is_sentry_object) return 'both';
-  if (d.is_potentially_hazardous) return 'pho';
-  if (d.is_sentry_object)         return 'sentry';
+  const isHazardous = d.is_potentially_hazardous || (d.risk_score_manual >= 0.5) || (d.probability_being_truely_hazardous >= 0.5);
+  if (isHazardous && d.is_sentry_object) return 'both';
+  if (isHazardous) return 'pho';
+  if (d.is_sentry_object) return 'sentry';
   return 'safe';
 }
 
 function _badgeLabel(d) {
-  if (d.is_potentially_hazardous && d.is_sentry_object) return '💜 PHO + SENTRY';
-  if (d.is_potentially_hazardous) return '🔴 POTENTIALLY HAZARDOUS';
-  if (d.is_sentry_object)         return '🟠 SENTRY OBJECT';
+  const isHazardous = d.is_potentially_hazardous || (d.risk_score_manual >= 0.5) || (d.probability_being_truely_hazardous >= 0.5);
+  if (isHazardous && d.is_sentry_object) return '💜 PHO + SENTRY';
+  if (isHazardous) return '🔴 POTENTIALLY HAZARDOUS';
+  if (d.is_sentry_object) return '🟠 SENTRY OBJECT';
   return '🔵 SAFE';
 }
 
-function _renderBasic(a) {
+function _updateBadge(a) {
   const badge = document.getElementById('explorer-badge');
   badge.className = `explorer-badge ${_badgeClass(a)}`;
   badge.textContent = _badgeLabel(a);
+}
+
+function _renderBasic(a) {
+  _updateBadge(a);
 
   document.getElementById('explorer-name').textContent = a.name;
   document.getElementById('explorer-id').textContent   = `NASA ID: ${a.id}`;
@@ -90,6 +96,9 @@ function _renderBasic(a) {
 }
 
 function _renderFull(data) {
+  // Upgrade the badge with the full data so ML predictive hazards apply successfully!
+  _updateBadge(data);
+
   // ML section
   const mlSec = document.getElementById('ex-ml-section');
   if (data.probability_being_truely_hazardous != null) {
