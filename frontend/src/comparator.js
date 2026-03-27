@@ -140,9 +140,54 @@ export async function renderComparator() {
 
 // ── Localized Earth Context ───────────────────────────────────────────────────
 let ecScene, ecCamera, ecRenderer, ecControls, ecAnimId;
-let ecEarthMesh;
+let ecCompareGroup;
+let ecEarthMesh, ecEarthGlow;
 let ecAsteroidMesh = null;
 let ecReticleMesh = null;
+let ecRenderScale = 1.0;
+let ecAstX = 1.05;
+let currentMag = 1.0;
+
+function _createEarthTexture() {
+  const size = 512;
+  const cvs = document.createElement('canvas');
+  cvs.width = size * 2; cvs.height = size;
+  const ctx = cvs.getContext('2d');
+
+  // Deep Ocean Gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, size);
+  grad.addColorStop(0, '#1055b0');
+  grad.addColorStop(0.5, '#1a73e8');
+  grad.addColorStop(1, '#051c4a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, size * 2, size);
+
+  // Continental Clusters
+  ctx.fillStyle = '#2d6a4f';
+  for (let i = 0; i < 20; i++) {
+    const x = Math.random() * size * 2;
+    const y = Math.random() * size;
+    const w = 40 + Math.random() * 200;
+    const h = 20 + Math.random() * 100;
+    ctx.beginPath();
+    ctx.ellipse(x, y, w / 2, h / 2, Math.random() * Math.PI, 0, Math.PI * 2);
+    ctx.fill();
+    // Wrap around for seamless texture
+    if (x + w/2 > size * 2) {
+      ctx.beginPath();
+      ctx.ellipse(x - size * 2, y, w / 2, h / 2, Math.random() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Specular map hint (Lighter areas for islands/shallows)
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+  for (let i = 0; i < 10; i++) {
+    ctx.fillRect(Math.random() * size * 2, Math.random() * size, 50, 20);
+  }
+
+  return new THREE.CanvasTexture(cvs);
+}
 
 function _initEarthScene() {
   if (ecRenderer) return; 
@@ -169,18 +214,24 @@ function _initEarthScene() {
   dirLight.position.set(5, 3, 5);
   ecScene.add(dirLight);
 
+  ecCompareGroup = new THREE.Group();
+  ecScene.add(ecCompareGroup);
+
   const earthGeo = new THREE.SphereGeometry(1.0, 64, 64);
   const earthMat = new THREE.MeshPhongMaterial({
-    color: 0x1a73e8, shininess: 80, specular: 0x223344
+    map: _createEarthTexture(),
+    shininess: 40,
+    specular: 0x223344
   });
   ecEarthMesh = new THREE.Mesh(earthGeo, earthMat);
-  ecScene.add(ecEarthMesh);
+  ecCompareGroup.add(ecEarthMesh);
   
   const glowGeo = new THREE.SphereGeometry(1.05, 32, 32);
   const glowMat = new THREE.MeshBasicMaterial({
     color: 0x4a90e2, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, side: THREE.BackSide
   });
-  ecScene.add(new THREE.Mesh(glowGeo, glowMat));
+  ecEarthGlow = new THREE.Mesh(glowGeo, glowMat);
+  ecCompareGroup.add(ecEarthGlow);
 
   window.addEventListener('resize', () => {
     if (!ecRenderer || document.getElementById('earth-compare-wrap').style.display === 'none') return;
@@ -194,17 +245,51 @@ function _initEarthScene() {
 
 function _animateEarthScene() {
   ecAnimId = requestAnimationFrame(_animateEarthScene);
-  ecControls.update();
   
-  if (ecEarthMesh) ecEarthMesh.rotation.y += 0.001;
-  if (ecAsteroidMesh) {
-    ecAsteroidMesh.rotation.x += 0.003;
-    ecAsteroidMesh.rotation.y += 0.005;
-  }
-  if (ecReticleMesh) {
-    ecReticleMesh.lookAt(ecCamera.position);
-    const pulse = 1.0 + Math.sin(Date.now() * 0.005) * 0.15;
-    ecReticleMesh.scale.set(pulse, pulse, pulse);
+  if (ecControls) {
+    // ── FIXED ANCHOR ZOOM LOGIC ───────────────────────────────────────
+    // The camera target is fixed at the asteroid center (ecAstX, 0, 0)
+    const fixedTarget = new THREE.Vector3(ecAstX, 0, 0);
+    const dist = ecCamera.position.distanceTo(fixedTarget);
+    
+    // Zoom Magnitude based on proximity to the fixed asteroid target
+    let targetMag = 1.0;
+    if (dist < 5.0) {
+      // Powerful magnification to show asteroid details alongside Earth
+      targetMag = 1.0 + Math.pow(Math.max(0, 5.0 - dist), 2.5) * 2.0;
+    }
+    
+    // Smoothly interpolate magnification
+    currentMag += (targetMag - currentMag) * 0.12;
+
+    // Apply scaling to the entire comparison group
+    // The group origin is at the asteroid center, so Earth scales "away" from it.
+    if (ecCompareGroup) {
+      ecCompareGroup.scale.set(currentMag, currentMag, currentMag);
+    }
+    
+    if (ecEarthMesh) ecEarthMesh.rotation.y += 0.001;
+    
+    if (ecAsteroidMesh) {
+      ecAsteroidMesh.rotation.x += 0.003;
+      ecAsteroidMesh.rotation.y += 0.005;
+    }
+
+    if (ecReticleMesh) {
+      ecReticleMesh.lookAt(ecCamera.position);
+      // Reticle pulse effect
+      const pulse = 1.0 + Math.sin(Date.now() * 0.005) * 0.15;
+      ecReticleMesh.scale.set(pulse, pulse, pulse);
+    }
+
+    // Stabilize the OrbitControls target to the asteroid center
+    ecControls.target.copy(fixedTarget);
+    ecControls.update();
+    
+    // Adjust min distance based on Earth's scaled geometry to prevent clipping
+    // The closest point is Earth's surface which is at distance (ecAstX - 1.0) * currentMag
+    const minSafeDist = Math.max(0.1, (ecAstX * currentMag) - (1.0 * currentMag));
+    ecControls.minDistance = 0.05 + minSafeDist; 
   }
   
   if (document.getElementById('earth-compare-wrap').style.display !== 'none') {
@@ -231,29 +316,38 @@ export function previewScale(a) {
   document.getElementById('ec-ratio').textContent = `1 : ${(1/ratio).toLocaleString(undefined, {maximumFractionDigits:0})}`;
 
   // Preserve mathematically flawless scale down to microscopic limits so WebGL doesn't cull
-  const mathScale = 2.0 * ratio;
-  const renderScale = Math.max(0.0005, mathScale);
-  const astX = 1.05 + renderScale * 0.5;
+  ecRenderScale = Math.max(0.0005, 2.0 * ratio);
+  ecAstX = 1.05 + ecRenderScale * 0.5;
+  currentMag = 1.0; // Reset magnification on new selection
+
+  // RE-POSITION Group and Earth for asteroid-centric scaling
+  // Group at ecAstX, Earth local at -ecAstX. World Earth = 0.
+  if (ecCompareGroup) {
+    ecCompareGroup.position.set(ecAstX, 0, 0);
+    ecCompareGroup.scale.set(1, 1, 1);
+  }
+  if (ecEarthMesh) ecEarthMesh.position.set(-ecAstX, 0, 0);
+  if (ecEarthGlow) ecEarthGlow.position.set(-ecAstX, 0, 0);
 
   if (ecAsteroidMesh) {
-    ecScene.remove(ecAsteroidMesh);
+    ecCompareGroup.remove(ecAsteroidMesh);
     ecAsteroidMesh.geometry.dispose();
     ecAsteroidMesh.material.dispose();
     ecAsteroidMesh = null;
   }
   if (ecReticleMesh) {
-    ecScene.remove(ecReticleMesh);
+    ecCompareGroup.remove(ecReticleMesh);
     ecReticleMesh.geometry.dispose();
     ecReticleMesh.material.dispose();
     ecReticleMesh = null;
   }
 
-  // Red targeting reticle to keep track of microscopic rocks
+  // Red targeting reticle centered at (0,0,0) local to group (asteroid center)
   const retGeo = new THREE.RingGeometry(0.06, 0.065, 32);
   const retMat = new THREE.MeshBasicMaterial({ color: 0xff0044, transparent: true, opacity: 0.8, side: THREE.DoubleSide });
   ecReticleMesh = new THREE.Mesh(retGeo, retMat);
-  ecReticleMesh.position.set(astX, 0, 0);
-  ecScene.add(ecReticleMesh);
+  ecReticleMesh.position.set(0, 0, 0);
+  ecCompareGroup.add(ecReticleMesh);
 
   const geo = new THREE.IcosahedronGeometry(0.5, 2); 
   const pos = geo.attributes.position;
@@ -271,19 +365,21 @@ export function previewScale(a) {
   });
 
   ecAsteroidMesh = new THREE.Mesh(geo, mat);
-  ecAsteroidMesh.scale.set(renderScale * 1.2, renderScale * 0.9, renderScale * 1.1);
-  ecAsteroidMesh.position.set(astX, 0, 0); 
-  ecScene.add(ecAsteroidMesh);
+  ecAsteroidMesh.scale.set(ecRenderScale * 1.2, ecRenderScale * 0.9, ecRenderScale * 1.1);
+  ecAsteroidMesh.position.set(0, 0, 0); // Local origin of group is the asteroid
+  ecCompareGroup.add(ecAsteroidMesh);
   
   // Update UI Camera Bounds dynamically so the macro zoom aligns perfectly with the size
   document.getElementById('cam-pov-front').onclick = () => { gsap.to(ecCamera.position, {x:0, y:0, z:4, duration:1.5, ease:'power3.inOut'}); ecControls.target.set(0.6,0,0); };
   document.getElementById('cam-pov-top').onclick   = () => { gsap.to(ecCamera.position, {x:0.6, y:3.5, z:0, duration:1.5, ease:'power3.inOut'}); ecControls.target.set(0.6,0,0); };
   document.getElementById('cam-pov-close').onclick = () => { 
-    const pushBack = Math.max(0.02, renderScale * 4.5);
-    gsap.to(ecCamera.position, {x: astX + pushBack, y: pushBack*0.5, z: pushBack, duration:1.5, ease:'power3.inOut'}); 
-    ecControls.target.set(astX, 0, 0); 
+    const pushBack = Math.max(0.02, ecRenderScale * 4.5);
+    gsap.to(ecCamera.position, {x: (ecAstX + pushBack) * 2.5, y: pushBack, z: pushBack * 2, duration:1.5, ease:'power3.inOut'}); 
+    ecControls.target.set(ecAstX, 0, 0); 
   };
   
-  // Auto-trigger default view
-  document.getElementById('cam-pov-front').onclick();
+  // Trigger default asteroid view
+  const closeBack = Math.max(0.02, ecRenderScale * 2.5);
+  gsap.to(ecCamera.position, {x: (ecAstX + closeBack) * 3, y: closeBack * 2, z: closeBack * 2, duration:1.5, ease:'power3.inOut'});
+  ecControls.target.set(ecAstX, 0, 0);
 }

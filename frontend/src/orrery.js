@@ -26,10 +26,10 @@ const COLORS = {
 
 const MISS_MIN_KM = 6599;
 const MISS_MAX_KM = 74794677;
-// Earth radius + Atmosphere is ~2.24. 
-// Miss distance 6599km is ~1.03 Earth Radii from Earth's center.
-// So mathematically passing at 2.4 units makes it graze the atmosphere realistically.
-const ORBIT_MIN = 2.4;
+// Earth radius is 2.5. Miss distance 6599km is ~1.03 Earth Radii from Earth's center.
+// Mathematically: 6599 / 6371 * 2.5 = 2.589. 
+// We set ORBIT_MIN slightly higher so no rock ever clips the mesh.
+const ORBIT_MIN = 3.0;
 const ORBIT_MAX = 48;
 const MAX_ASTEROIDS = 35000; // headroom for weekly growth
 
@@ -212,7 +212,7 @@ function _addEarth() {
 
   const earthTex = new THREE.CanvasTexture(cvs);
 
-  const earthGeo = new THREE.SphereGeometry(2, 48, 48); // 2.0 Radius = 6,371 km
+  const earthGeo = new THREE.SphereGeometry(2.5, 64, 64); // 2.5 Radius = 6,371 km
   const earthMat = new THREE.MeshPhongMaterial({
     map: earthTex, shininess: 60, specular: new THREE.Color(0x334455),
   });
@@ -223,7 +223,7 @@ function _addEarth() {
   scene.add(new THREE.Mesh(earthGeo, earthMat));
 
   // Atmosphere glow
-  const glowGeo = new THREE.SphereGeometry(2.24, 32, 32); // Scaled 12% above surface
+  const glowGeo = new THREE.SphereGeometry(2.8, 32, 32); // Scaled 12% above surface (2.5 * 1.12 = 2.8)
   const glowMat = new THREE.MeshBasicMaterial({
     color: 0x1a73e8, transparent: true, opacity: 0.12,
     side: THREE.BackSide, blending: THREE.AdditiveBlending,
@@ -253,15 +253,16 @@ function _orbitRadius(missKm) {
 
 function _asteroidSize(minDiam, maxDiam) {
   const avgDiamKm = (minDiam + maxDiam) / 2;
-  // MATH: Earth radius 6,371 km is exactly 2.0 WebGL scene units.
-  // True 1:1 scale: (avgDiamKm / 6371.0) * 2.0 scene units.
-  // We exaggerate by 70x because a true 1km asteroid would be a microscopic, invisible pixel.
-  // This mathematically guarantees size ratios across all asteroids are 100% accurate to each other.
-  const trueRelativeSize = (avgDiamKm / 6371.0) * 2.0;
-  const uiSize = trueRelativeSize * 70.0;
+  // MATH: Earth radius 6,371 km is exactly 2.5 WebGL scene units.
+  // True scale radius in units: (avgDiamKm / 2 / 6371.0) * 2.5
+  // Simplified: (avgDiamKm / 12742.0) * 2.5
+  const trueRadiusUnits = (avgDiamKm / 12742.0) * 2.5;
+  
+  // We exaggerate by 50x (reduced from 70x) for better UI visibility without dwarfing Earth
+  const uiSize = trueRadiusUnits * 50.0;
 
-  // Safe limit so the screen doesn't completely turn to rock if a 50km anomaly orbits
-  return Math.max(0.015, Math.min(0.8, uiSize));
+  // STRICT CAP: No asteroid can ever have a radius > 1.25 units (half of Earth's 2.5 radius)
+  return Math.max(0.015, Math.min(1.25, uiSize));
 }
 
 function _typeColor(pho, sentry) {
@@ -307,13 +308,13 @@ export function addAsteroidBatch(batch) {
     // Reduced speed multiplier by 20% (0.00015 * 0.8 = 0.00012) per request
     const speed = vKps * dir * 0.00012;
 
-    // Extreme randomized shape stretching (x, y, z individually morphed)
-    let sx = size * (0.6 + Math.random() * 1.8);
-    let sy = size * (0.6 + Math.random() * 1.8);
-    let sz = size * (0.6 + Math.random() * 1.8);
-    // 20% chance to be extremely stretched
-    if (Math.random() > 0.8) sy *= 2.5;
-    if (Math.random() > 0.8) sx *= 2.0;
+    // Controlled randomized shape stretching (max 1.5x to avoid planetary sizes)
+    let sx = size * (0.8 + Math.random() * 0.4);
+    let sy = size * (0.8 + Math.random() * 0.4);
+    let sz = size * (0.8 + Math.random() * 0.4);
+    // 10% chance to be elongated, but capped
+    if (Math.random() > 0.9) sy *= 1.5;
+    if (Math.random() > 0.9) sx *= 1.3;
 
     const rx = Math.random() * Math.PI * 2;
     const ry = Math.random() * Math.PI * 2;
