@@ -168,6 +168,7 @@ kaggle.json/
 # Spyder project settings
 .spyderproject
 .spyproject
+create_notebook.py
 
 # Rope project settings
 .ropeproject
