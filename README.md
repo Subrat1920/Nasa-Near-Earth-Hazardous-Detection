@@ -1,4 +1,4 @@
-# 🚀 NASA NEO Hazard Classification  
+# 🚀 NASA NEO Interactive Universe & Hazard Classification
 
 <p align="center">
 
@@ -31,10 +31,11 @@
   <!-- PostgreSQL -->
   <img src="https://img.shields.io/badge/Database-PostgreSQL-blue?logo=postgresql" />
 
-  <!-- Grafana -->
-  <a href="https://subrat1920.grafana.net/public-dashboards/888774ac60ce422fb3f0abb526512867">
-    <img src="https://img.shields.io/badge/Monitoring-Grafana-orange?logo=grafana" />
-  </a>
+  <!-- FastAPI -->
+  <img src="https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white" />
+
+  <!-- Three.js -->
+  <img src="https://img.shields.io/badge/3D-Three.js-black?logo=three.js&logoColor=white" />
 
   <!-- Python -->
   <img src="https://img.shields.io/badge/Python-3.10+-yellow?logo=python" />
@@ -44,169 +45,102 @@
 
 </p>
 
- 
-
-This project builds a **production-grade ML pipeline** to classify **Near-Earth Objects (NEOs)** as *hazardous* or *non-hazardous*.  
-It automates **data ingestion, preprocessing, model training, monitoring, and drift detection** using **GitHub Actions, PostgreSQL, MLflow, DAGsHub, and Grafana**.  
+This project is a **high-performance, production-grade 3D web application** that visualizes **32,001 NASA Near-Earth Objects (NEOs)** and classifies them as *hazardous* or *non-hazardous*. It combines a sophisticated **Three.js 3D simulation** with a robust **MLOps pipeline** automated via GitHub Actions, DVC, and FastAPI.
 
 ---
 
-## 📑 Project Overview  
+## 📑 Project Overview
 
-- **Goal**: Predict whether an asteroid/NEO poses a potential hazard to Earth.  
-- **Data Source**: NASA Near Earth Object (NEO) dataset (orbital data, diameters, velocities, etc.).  
-- **Core Features**:  
-  - Automated data ingestion (weekly updates)  
-  - Preprocessing & handling class imbalance (SMOTE)  
-  - Model training with **MLflow tracking on DAGsHub**  
-  - Logging models & preprocessors into **PostgreSQL**  
-  - **Grafana dashboards** for monitoring & visualization  
-  - Weekly **data drift detection** with notifications  
+- **Interactive Universe**: A cinematic 3D simulation (Orrery) of the solar system featuring 32,000+ real-time tracked asteroids.
+- **AI-Driven Prediction**: Real-time hazard classification using ML models trained with NASA orbital data.
+- **3D Scale Comparator**: High-fidelity visual tool to compare asteroid sizes against Earth in real-time.
+- **Full-Stack Architecture**: Modern split-module design with a specialized FastAPI backend and a glassmorphic Vanilla JS frontend.
+- **End-to-End MLOps**: Automated data ingestion, preprocessing (SMOTE), drift detection, and monitoring via MLflow and Grafana.
 
 ---
 
-## ⚙️ Tech Stack  
+## ⚙️ Tech Stack
 
-- **Orchestration**: GitHub Actions (scheduled workflows)  
-- **Database**: PostgreSQL  
-- **Machine Learning**: scikit-learn, imbalanced-learn (SMOTE)  
-- **Experiment Tracking**: MLflow (integrated with DAGsHub)  
-- **Monitoring & Visualization**: Grafana   
+### Frontend (Interactive UI)
+- **3D Engine**: Three.js (WebGL)
+- **Styling**: Vanilla CSS with Glassmorphism
+- **State Management**: Asynchronous JS with custom state-driven components
 
----
+### Backend (Production API)
+- **Framework**: FastAPI (Asynchronous)
+- **Database**: Neon (Serverless PostgreSQL)
+- **Real-time**: WebSockets for live asteroid tracking
+- **Data Versioning**: DVC (Data Version Control)
 
-## 🔄 Workflow Pipeline  
-
-### 1. Data Ingestion  
-- GitHub Actions scheduled weekly workflow.  
-- Fetches latest NASA NEO dataset.  
-- Loads data into **PostgreSQL**.  
-
-### 2. Data Transformation  
-- Data cleaning, feature scaling, and encoding.  
-- **SMOTE** applied to balance hazardous vs non-hazardous classes.  
-
-### 3. Model Training  
-- Multiple ML models trained (Logistic Regression, Random Forest, XGBoost, etc.).  
-- Tracked with **MLflow + DAGsHub authentication**.  
-- Best model automatically selected.  
-
-### 4. Model Logging  
-- Best model + preprocessing pipeline stored in **PostgreSQL**.  
-- Enables consistent inference and reproducibility.  
-
-### 5. Monitoring with Grafana  
-- Grafana dashboard connected to PostgreSQL.  
-- Visualizes:  
-  - Ingestion stats  
-  - Model performance (accuracy, precision, recall, F1)  
-  - Drift metrics  
-
-### 6. Data Drift Detection  
-- Weekly scheduled GitHub Action.  
-- Drift metrics computed & logged in PostgreSQL.  
-- Results visualized in Grafana.  
-  
+### Machine Learning & MLOps
+- **ML Engine**: Scikit-Learn, XGBoost, CatBoost
+- **Pipeline**: GitHub Actions (Scheduled Workflows)
+- **Experiment Tracking**: MLflow (hosted on DAGsHub)
+- **Monitoring**: Grafana Dashboards
 
 ---
 
-## 🌳 Repository Structure  
+## 🌌 Interactive Modules
+
+### 1. High-Fidelity 3D Orrery
+- Real-time visualization of 32,001 unique NASA asteroids.
+- Cinematic camera controls with zoom-to-asteroid functionality.
+- Procedural textures for celestial bodies and starfield environments.
+
+### 2. Asteroid-to-Earth Comparator
+- Dynamic 3D model scaling based on real physical diameters.
+- Synchronized zoom effects for precise scale perception.
+- Targeting reticle and AI-driven risk indicators.
+
+### 3. AI Explorer & Leaderboard
+- Name-based asteroid search and advanced filtering.
+- AI risk assessment scoring displayed in real-time.
+- WebSocket-powered "Recent Discoveries" live feed.
+
+### 4. Technical Dashboard (MLOps)
+- Visual documentation of the end-to-end data pipeline.
+- DVC-driven data flow visualization.
+- Real-time backend health monitoring.
+
+---
+
+## 🌳 Repository Structure
 
 ```
-├── 📁 .github/
-│   └── 📁 workflows/
-│       ├── ⚙️ continous_integration.yml
-│       ├── ⚙️ data_drift_check.yml
-│       ├── ⚙️ data_pusher.yml
-│       └── ⚙️ predict.yml
-├── 📁 Data/
-│   └── 📄 neo_data.csv
-├── 📁 Notebook/
-│   └── 📓 border_line_smote.ipynb
-├── 📁 Research_Paper/
-│   ├── 📁 Images/
-│   │   └── 🖼️ System Architecture.png
-│   ├── 📄 Automated End.docx
-│   ├── 📕 Automated End.pdf
-│   └── 📊 Presentation.pptx
-├── 📁 pusher/
-│   ├── 🐍 __init__.py
-│   └── 🐍 weekly_data_pusher.py
-├── 📁 src/
-│   ├── 📁 constants/
-│   │   ├── 🐍 __init__.py
-│   │   ├── 🐍 config_entity.py
-│   │   ├── 🐍 entity.py
-│   │   └── 🐍 params.py
-│   ├── 📁 custom/
-│   │   ├── 🐍 __init__.py
-│   │   ├── 🐍 data_ingestion.py
-│   │   ├── 🐍 data_transformation.py
-│   │   ├── 🐍 data_validation.py
-│   │   └── 🐍 model_trainer.py
-│   ├── 📁 pipeline/
-│   │   ├── 📁 prediction/
-│   │   │   ├── 🐍 __init__.py
-│   │   │   └── 🐍 predict.py
-│   │   └── 🐍 __init__.py
-│   ├── 📁 utils/
-│   │   ├── 🐍 __init__.py
-│   │   └── 🐍 utils.py
-│   ├── 🐍 __init__.py
-│   ├── 🐍 exception.py
-│   └── 🐍 logging.py
-├── 📁 tests/
-│   ├── 🐍 __init__.py
-│   ├── 🐍 test_data_ingestion.py
-│   └── 🐍 test_utils.py
-├── 📜 LICENSE
-├── 📖 README.md
-├── 🐍 app.py
-├── 🐍 main.py
-├── 🐍 predict_example.py
-├── 📄 requirements.txt
-└── 🐍 setup.py
+├── 📁 .github/             # GitHub Actions Workflows (CI/CD, Ingestion, Drift)
+├── 📁 backend/             # FastAPI Application (API v2.0)
+│   ├── 🐍 main.py          # API Entry Point
+│   ├── 🐍 models.py        # SQLAlchemy/Neon Models
+│   ├── 🐍 database.py      # NeonDB Connection Pool & Watcher
+├── 📁 frontend/            # High-Fidelity Web Interface
+│   ├── 📁 src/             # Specialized 3D & UI Components
+│   │   ├── 💎 orrery.js    # 3D Solar System Engine
+│   │   ├── 💎 comparator.js # 3D Scale Comparison
+│   │   ├── 📂 mlops.js     # Technical Dashboard
+├── 📁 src/                 # ML Pipeline Source Code (V1)
+│   ├── 📁 custom/          # Data Transformation & Model Training
+├── 📁 Data/                # Local data storage (DVC tracked)
+├── 📁 Notebook/            # Research & Exploratory Analysis
+├── 🐍 app.py               # Legacy Flask Gateway
+├── 🧊 dvc.yaml             # Data Pipeline Orchestration
+└── 📖 README.md            # This documentation
 ```
----
-
 
 ---
 
-## 📊 Grafana Dashboards  
+## 📊 Monitoring & Alerts
 
-- **Data Ingestion**: Track weekly data updates.  
-- **Model Performance**: Compare metrics over time.  
-- **Drift Monitoring**: Detect and visualize changes in data distribution.  
-
----
-
-## 🔔 Alerts  
-
-- **Email Notification** → Sent when data drift detected.  
-- **Grafana Alerts** → Triggered for abnormal performance drops.  
+- **Grafana Dashboards**: Publicly accessible dashboards tracking ingestion, performance, and drift.
+- **Data Drift Detection**: Automated weekly checks with email notifications via GitHub Actions.
+- **Real-time Watcher**: Background service polling for new unique asteroid discoveries.
 
 ---
 
-## 🚀 Future Improvements  
+## 👨‍💻 Author
 
-- Deploy inference API for real-time predictions.  
-- Add Docker + Kubernetes for scalable deployment.  
-- Integrate SHAP for explainability of hazardous predictions.  
-
----
-
-## 👨‍💻 Author  
-
-**Subrat Mishra**  
+**Subrat Mishra**
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-Visit-blue?style=flat&logo=internet-explorer)](https://mishra-subrat.framer.website)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/subrat1920/)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/Subrat1920)
 [![Medium](https://img.shields.io/badge/Medium-Read-black?style=flat&logo=medium)](https://medium.com/@subrat1920/1671404ef449)
-
----
-
-
-
-
-

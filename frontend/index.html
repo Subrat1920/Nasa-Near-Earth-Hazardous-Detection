@@ -81,6 +81,9 @@
         <button class="nav-btn" id="nav-mlops" data-view="mlops" title="MLOps Dashboard">
           <span class="nav-icon">🧠</span><span class="nav-label">MLOps</span>
         </button>
+        <button class="nav-btn" id="nav-architecture" data-view="architecture" title="Technical Architecture">
+          <span class="nav-icon">🛠️</span><span class="nav-label">Architecture</span>
+        </button>
         <button class="nav-btn" id="nav-about" data-view="about" title="Architecture & Credits">
           <span class="nav-icon">👨‍💻</span><span class="nav-label">About</span>
         </button>
@@ -315,137 +318,46 @@
                 </div>
               </div>
             </div>
+          </div><!-- /mlops-grid -->
+        </section>
+
+        <!-- Technical Architecture View -->
+        <section id="view-architecture" class="view hidden">
+          <div class="view-header">
+            <h2>🛠️ Technical Architecture Workflow</h2>
+            <p style="color:var(--muted)">Immersive 3D visualization of the end-to-end data journey.</p>
           </div>
           
-          <div class="view-header" style="border-top: 1px solid var(--border); padding-top: 32px; margin-top: 16px;">
-            <h2>⚙️ Technical Architecture Workflow</h2>
-          </div>
-          <div class="arch-pipeline main-pipeline">
-            <div class="arch-node" data-stage="ingestion">
-              <div class="node-icon">🛰️</div>
-              <div class="node-title">1. Data Ingestion</div>
-              <div class="node-sub">NASA API & DVC</div>
+          <div id="arch-viz-container">
+            <button id="arch-back-btn" class="hidden">
+              <span>←</span> Back to Overview
+            </button>
+            <canvas id="arch-canvas"></canvas>
+            
+            <!-- Dynamic Overlays -->
+            <div id="arch-labels"></div>
+            <div id="arch-sub-labels"></div>
+            <div id="arch-bubble" class="arch-bubble">
+              <span class="arch-bubble-title" id="bubble-title"></span>
+              <span class="arch-bubble-tech" id="bubble-tech"></span>
+              <p class="arch-bubble-work" id="bubble-work"></p>
             </div>
-            <div class="arch-arrow">→</div>
-            <div class="arch-node" data-stage="ml">
-              <div class="node-icon">🧠</div>
-              <div class="node-title">2. ML Pipeline</div>
-              <div class="node-sub">MLflow & DAGsHub</div>
-            </div>
-            <div class="arch-arrow">→</div>
-            <div class="arch-node" data-stage="backend">
-              <div class="node-icon">⚙️</div>
-              <div class="node-title">3. FastAPI Backend</div>
-              <div class="node-sub">NeonDB PostgreSQL</div>
-            </div>
-            <div class="arch-arrow">→</div>
-            <div class="arch-node" data-stage="frontend">
-              <div class="node-icon">🌌</div>
-              <div class="node-title">4. WebGL Frontend</div>
-              <div class="node-sub">Three.js & UI</div>
+
+            <!-- Quick Navigation (Active in drill-down) -->
+            <div id="arch-nav-group" class="hidden">
+              <button id="arch-prev-btn" class="arch-nav-btn">
+                <span>←</span> Previous Stage
+              </button>
+              <button id="arch-next-btn" class="arch-nav-btn">
+                Next Stage <span>→</span>
+              </button>
             </div>
           </div>
+        </section>
 
-          <!-- Sub-Pipelines Container -->
-          <div id="sub-pipelines-container" style="min-height: 160px; padding-bottom: 32px;">
-            <div class="arch-pipeline sub-pipeline" id="sub-ingestion" style="display:none; transform: scale(0.95); opacity: 0; transition: all 0.3s; padding:0 32px;">
-              <div class="arch-node sub-node" data-detail="api_extraction">
-                <div class="node-icon" style="font-size: 1.5rem;">📡</div>
-                <div class="node-title">API Extraction</div>
-                <div class="node-sub">api_data.json</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="data_storage">
-                <div class="node-icon" style="font-size: 1.5rem;">💾</div>
-                <div class="node-title">Data Storage</div>
-                <div class="node-sub">extraction.py</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="ingestion">
-                <div class="node-icon" style="font-size: 1.5rem;">📥</div>
-                <div class="node-title">Ingestion</div>
-                <div class="node-sub">neo_data.csv</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="transformation">
-                <div class="node-icon" style="font-size: 1.5rem;">🔄</div>
-                <div class="node-title">Transformation</div>
-                <div class="node-sub">transformation_db.json</div>
-              </div>
-            </div>
-
-            <div class="arch-pipeline sub-pipeline" id="sub-ml" style="display:none; transform: scale(0.95); opacity: 0; transition: all 0.3s; padding:0 32px;">
-              <div class="arch-node sub-node" data-detail="model_training">
-                <div class="node-icon" style="font-size: 1.5rem;">🤖</div>
-                <div class="node-title">Model Training</div>
-                <div class="node-sub">model_trainer.py</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="batch_prediction">
-                <div class="node-icon" style="font-size: 1.5rem;">⚡</div>
-                <div class="node-title">Batch Prediction</div>
-                <div class="node-sub">predict.py</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="data_drift">
-                <div class="node-icon" style="font-size: 1.5rem;">📊</div>
-                <div class="node-title">Drift Detection</div>
-                <div class="node-sub">data_validation.py</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="grafana">
-                <div class="node-icon" style="font-size: 1.5rem;">📈</div>
-                <div class="node-title">Grafana Monitor</div>
-                <div class="node-sub">grafana_data_vis.json</div>
-              </div>
-            </div>
-
-            <div class="arch-pipeline sub-pipeline" id="sub-backend" style="display:none; transform: scale(0.95); opacity: 0; transition: all 0.3s; padding:0 32px;">
-              <div class="arch-node sub-node" data-detail="serve_model">
-                <div class="node-icon" style="font-size: 1.5rem;">🚀</div>
-                <div class="node-title">Serve Model</div>
-                <div class="node-sub">app.py</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="asgi_server">
-                <div class="node-icon" style="font-size: 1.5rem;">🌐</div>
-                <div class="node-title">ASGI Server</div>
-                <div class="node-sub">Uvicorn Runtime</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="live_endpoint">
-                <div class="node-icon" style="font-size: 1.5rem;">🔌</div>
-                <div class="node-title">Live API</div>
-                <div class="node-sub">/api/v1/leaderboard</div>
-              </div>
-            </div>
-
-            <div class="arch-pipeline sub-pipeline" id="sub-frontend" style="display:none; transform: scale(0.95); opacity: 0; transition: all 0.3s; padding:0 32px;">
-              <div class="arch-node sub-node" data-detail="data_consumption">
-                <div class="node-icon" style="font-size: 1.5rem;">📥</div>
-                <div class="node-title">JSON Pipeline</div>
-                <div class="node-sub">main.js</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="geometry_mapping">
-                <div class="node-icon" style="font-size: 1.5rem;">🧮</div>
-                <div class="node-title">Geometry Engine</div>
-                <div class="node-sub">orrery.js</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="webgl_shaders">
-                <div class="node-icon" style="font-size: 1.5rem;">🎨</div>
-                <div class="node-title">WebGL Shaders</div>
-                <div class="node-sub">InstancedMesh & GLSL</div>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-node sub-node" data-detail="ui_isolation">
-                <div class="node-icon" style="font-size: 1.5rem;">🔍</div>
-                <div class="node-title">UI Isolation</div>
-                <div class="node-sub">Cinematic Camera Tracking</div>
-              </div>
-            </div>
-          </div>
+        <!-- About View -->
+        <section id="view-about" class="view hidden">
+          <!-- About content still ends here correctly -->
         </section>
 
       </main>
@@ -508,154 +420,14 @@
         </div>
       </aside>
 
-      <!-- Architecture Detail Panel -->
-      <aside id="arch-panel" class="panel-hidden">
-        <button id="arch-close">✕</button>
-        <div id="arch-content">
-          <div class="explorer-badge both" id="arch-badge">Pipeline Stage</div>
-          <h2 id="arch-title" style="margin-bottom: 24px;">Stage Name</h2>
-          
-          <div class="explorer-section">
-            <h4>Core Technologies</h4>
-            <div class="info-grid" id="arch-tech-grid" style="grid-template-columns: 1fr;">
-              <!-- Filled via JS -->
-            </div>
-          </div>
-
-          <div class="explorer-section">
-            <h4>Architectural Workflow</h4>
-            <ul id="arch-workflow" style="color: var(--text); line-height: 1.8; padding-left: 20px; font-size: 0.82rem; display: flex; flex-direction: column; gap: 8px;">
-              <!-- Filled via JS -->
-            </ul>
-          </div>
-        </div>
-      </aside>
 
     </div><!-- /#layout -->
   </div><!-- /#app -->
 
   <script type="module" src="/src/main.js"></script>
   <script>
-    // ── Architectural Node Interaction Logic ──
-    const mainNodes = document.querySelectorAll('.arch-node[data-stage]');
-    const subNodes  = document.querySelectorAll('.arch-node.sub-node');
-    const archPanel = document.getElementById('arch-panel');
-    const archClose = document.getElementById('arch-close');
-    const archTitle = document.getElementById('arch-title');
-    const archTech  = document.getElementById('arch-tech-grid');
-    const archWork  = document.getElementById('arch-workflow');
-
-    // Detailed information for the side panel when clicking a Sub-Node
-    const detailData = {
-      'api_extraction': {
-        title: 'api_extraction', tech: ['Stage: Data Ingestion', 'Target: api_data.json', 'Source: NASA JPL Remote API'],
-        steps: ['Extracts real-time orbital definitions from the NASA Near Earth Object endpoint.', 'Buffers responses and initiates remote payload ingestion.']
-      },
-      'data_storage': {
-        title: 'data_storage', tech: ['Stage: Data Ingestion', 'Generator: src/custom/extraction.py', 'Artifact: extraction.json'],
-        steps: ['Python automated sequence maps raw NASA payloads into localized database structures.', 'Structures data specifically for integration into PostgreSQL tables.']
-      },
-      'ingestion': {
-        title: 'ingestion', tech: ['Stage: Data Ingestion', 'Generator: src/custom/data_ingestion.py', 'Artifact: Data/neo_data.csv'],
-        steps: ['Reads from extraction cache and structures incoming JSON into flattened, primary CSV schemas.', 'Registers initial dataset mutations via DVC.']
-      },
-      'transformation': {
-        title: 'transformation', tech: ['Stage: Data Ingestion', 'Generator: src/custom/data_transformation.py', 'Artifact: transformation_db.json'],
-        steps: ['Cleanses corrupted rows, normalizes distances, and applies rigorous feature engineering.', 'Constructs the finalized tensor inputs for Machine Learning blocks.']
-      },
-      'model_training': {
-        title: 'model_training', tech: ['Stage: ML Pipeline', 'Generator: src/custom/model_trainer.py', 'Artifact: model_trainer_db.json'],
-        steps: ['Parses transformed DB configurations and dynamically trains XGBoost and Random Forest architectures.', 'Evaluates categorical and numeric features identifying Near-Earth Hazards natively.']
-      },
-      'batch_prediction': {
-        title: 'batch_prediction', tech: ['Stage: ML Pipeline', 'Generator: predict.py', 'Artifact: fresh_prediction.json'],
-        steps: ['Executes localized unlabelled batch testing generating deterministic model evaluations.', 'Serves as the raw probability engine tracking object risk statuses.']
-      },
-      'data_drift': {
-        title: 'data_drift_detection', tech: ['Stage: ML Pipeline', 'Generator: data_validation.py', 'Artifact: data_validation.json'],
-        steps: ['Utilizes Population Stability Index (PSI) equations to monitor incoming live models against historical signatures.', 'Triggers alerts upon data drift.']
-      },
-      'grafana': {
-        title: 'grafana_monitoring', tech: ['Stage: ML Pipeline', 'Protocol: Dashboard Visualization', 'Artifact: grafana_data_vis.json'],
-        steps: ['Aggregates PSI drift metrics and system loads directly onto remote dashboard nodes.', 'Provides continuous real-time MLOps tracking.']
-      },
-      'serve_model': {
-        title: 'serve_model', tech: ['Stage: FastAPI Backend', 'Router: app.py', 'Dependency: model_trainer_db.json'],
-        steps: ['Boots the Python FastAPI environment and loads the serialized Random Forest .pkl models.', 'Opens the CORS framework to accept web socket and HTTP polling.']
-      },
-      'asgi_server': {
-        title: 'ASGI Server Configuration', tech: ['Server: Uvicorn ASGI Engine', 'Mode: Asynchronous Web Routing'],
-        steps: ['Exposes high-concurrency event loops handling 30,000+ localized data fetch requests simultaneously without thread locking.']
-      },
-      'live_endpoint': {
-        title: 'Live API Endpoints', tech: ['Endpoint: /api/v1/leaderboard', 'Encoding: UTF-8 JSON Streaming'],
-        steps: ['Streams raw risk estimations and orbital parameters from NeonDB to the connected WebGL client.']
-      },
-      'data_consumption': {
-        title: 'JSON Data Consumption', tech: ['Script: main.js', 'Logic: Fetch API Streaming', 'Framework: Vanilla JS'],
-        steps: ['Asynchronously ingests 32,001 data arrays from the FastAPI endpoints.', 'Parses categorical flags into native numeric bounds.']
-      },
-      'geometry_mapping': {
-        title: 'Geometry Mapping Engine', tech: ['Script: orrery.js', 'Mathematics: Euler Angles', 'Space: True 3D Euclidean'],
-        steps: ['Uses customized trigonometric calculations converting localized 2D miss_distance_km parameters into highly complex 3D spherical orbits around the Sun.']
-      },
-      'webgl_shaders': {
-        title: 'WebGL Shaders & Instancing', tech: ['API: Three.js InstancedMesh', 'Buffer: Fragment & Vertex Shaders', 'Performance: GPU VRAM bound'],
-        steps: ['Discards massive CPU overhead by packing geometries into single-draw calls.', 'Uses mathematical GLSL fractional routines to generate localized orbital noise crag surfaces entirely on the GPU.']
-      },
-      'ui_isolation': {
-        title: 'UI Visual Isolation', tech: ['Algorithm: Frustum Geometry Culling', 'Feature: Cinematic Camera Tracking'],
-        steps: ['Dynamically manipulates standard array buffers to force specific objects into invisibility scopes.', 'Utilizes GSAP tweens seamlessly projecting a camera behind the targeted orbital velocity.']
-      }
-    };
-
-    // Main Node Click -> Shows Sub-Pipeline
-    mainNodes.forEach(node => {
-      node.addEventListener('click', () => {
-        mainNodes.forEach(n => n.classList.remove('active'));
-        subNodes.forEach(n => n.classList.remove('active'));
-        archPanel.classList.add('panel-hidden');
-        
-        node.classList.add('active');
-        const targetStage = node.dataset.stage;
-
-        document.querySelectorAll('.sub-pipeline').forEach(pipe => {
-          pipe.style.opacity = '0';
-          pipe.style.transform = 'scale(0.95)';
-          setTimeout(() => { if (pipe.style.opacity === '0') pipe.style.display = 'none'; }, 200);
-        });
-
-        const targetPipe = document.getElementById('sub-' + targetStage);
-        if (targetPipe) {
-          setTimeout(() => {
-            targetPipe.style.display = 'flex';
-            targetPipe.offsetHeight; // Force reflow
-            targetPipe.style.transform = 'scale(1)';
-            targetPipe.style.opacity = '1';
-          }, 200);
-        }
-      });
-    });
-
-    // Sub Node Click -> Opens Detail Panel
-    subNodes.forEach(node => {
-      node.addEventListener('click', () => {
-        subNodes.forEach(n => n.classList.remove('active'));
-        node.classList.add('active');
-        
-        const dt = detailData[node.dataset.detail];
-        if (dt) {
-          archTitle.textContent = dt.title;
-          archTech.innerHTML = dt.tech.map(t => '<div class="info-item"><span class="info-val" style="color:var(--accent)">' + t + '</span></div>').join('');
-          archWork.innerHTML = dt.steps.map(s => '<li>' + s + '</li>').join('');
-          archPanel.classList.remove('panel-hidden');
-        }
-      });
-    });
-
-    archClose.addEventListener('click', () => {
-      archPanel.classList.add('panel-hidden');
-      subNodes.forEach(n => n.classList.remove('active'));
+    document.getElementById('arch-back-btn')?.addEventListener('click', () => {
+      // Handled in main.js
     });
   </script>
 </body>

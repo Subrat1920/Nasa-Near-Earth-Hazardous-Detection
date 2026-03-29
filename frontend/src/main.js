@@ -5,11 +5,12 @@
 
 import './style.css';
 import { pingHealth, fetchStats, fetchAllAsteroids, connectLiveWS } from './api.js';
-import { initOrrery, addAsteroidBatch, addSingleAsteroid, setFilter, focusAsteroid, resetCamera } from './orrery.js';
+import { pauseOrrery, resumeOrrery, initOrrery, addAsteroidBatch, addSingleAsteroid, setFilter, focusAsteroid, resetCamera } from './orrery.js';
 import { initExplorer, openExplorer, closeExplorer, getCompareQueue, syncCompareFromExplorer } from './explorer.js';
 import { initLeaderboard, loadLeaderboard } from './leaderboard.js';
 import { initComparator, addToCompare, renderComparator } from './comparator.js';
 import { loadMLOps } from './mlops.js';
+import { initArchViz, pauseArchViz, resumeArchViz } from './arch_viz.js';
 
 // ── Loading screen helpers ─────────────────────────────────────────────────
 const loadingBar   = document.getElementById('loading-bar');
@@ -37,6 +38,7 @@ function hideLoading() {
 let activeView   = 'orrery';
 let leaderboardLoaded = false;
 let mlopsLoaded       = false;
+let archVizLoaded     = false;
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -54,6 +56,20 @@ function switchView(view) {
   document.querySelectorAll('.view').forEach(v =>
     v.classList.toggle('active', v.id === `view-${view}`));
 
+  // ── Smart GPU Power Management ──
+  // Stop background 3D engines to prevent laptop lag and black screens
+  if (view === 'orrery') {
+    resumeOrrery();
+    pauseArchViz();
+  } else if (view === 'architecture') {
+    pauseOrrery();
+    if (archVizLoaded) resumeArchViz();
+  } else {
+    // Other tabs: Pause both 3D engines to save 100% GPU
+    pauseOrrery();
+    pauseArchViz();
+  }
+
   // Lazy-load data for non-orrery views
   if (view === 'leaderboard' && !leaderboardLoaded) {
     leaderboardLoaded = true;
@@ -67,6 +83,26 @@ function switchView(view) {
     syncCompareFromExplorer(getCompareQueue());
     renderComparator();
   }
+  
+  if (view === 'architecture' && !archVizLoaded) {
+    archVizLoaded = true;
+    const archCanvas = document.getElementById('arch-canvas');
+    const archBackBtn = document.getElementById('arch-back-btn');
+    
+    // Initialise and start immediately
+    requestAnimationFrame(() => {
+      initArchViz(archCanvas, (stageId) => {
+        console.log("Stage selected:", stageId);
+      });
+    });
+
+    if (archBackBtn) {
+      archBackBtn.addEventListener('click', () => {
+        import('./arch_viz.js').then(m => m.resetToOverview());
+      });
+    }
+  }
+
   if (view !== 'orrery') {
     closeExplorer();
   }

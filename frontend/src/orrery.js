@@ -613,8 +613,11 @@ export function resetCamera() {
   });
 }
 
+let isPaused = false;
+
 // ── Render Loop ────────────────────────────────────────────────────────────
 function _animate() {
+  if (isPaused) return;
   animId = requestAnimationFrame(_animate);
   frameCount++;
 
@@ -672,9 +675,21 @@ function _onResize() {
   renderer.setSize(w, h, false);
 }
 
+// ── Animation Control ──────────────────────────────────────────────────────
+export function pauseOrrery() {
+  isPaused = true;
+  if (animId) cancelAnimationFrame(animId);
+}
+
+export function resumeOrrery() {
+  if (!isPaused) return;
+  isPaused = false;
+  _animate();
+}
+
 // ── Cleanup ─────────────────────────────────────────────────────────────────
 export function destroyOrrery() {
-  cancelAnimationFrame(animId);
+  pauseOrrery();
   window.removeEventListener('resize', _onResize);
-  renderer.dispose();
+  if (renderer) renderer.dispose();
 }
