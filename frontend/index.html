@@ -229,7 +229,7 @@
             <h2>🧠 MLOps Dashboard</h2>
             <p class="view-sub">Model training history, data drift, and pipeline health</p>
           </div>
-          <div id="mlops-grid">
+          <div class="mlops-grid">
             <div class="mlops-card" id="mlops-model-card">
               <h3>Current Model</h3>
               <div id="mlops-model-info">Loading...</div>
@@ -272,53 +272,92 @@
           </div>
         </section>
 
-        <!-- About / Credits View -->
-        <section id="view-about" class="view">
+        <!-- About / Credits View — Mission Control Dashboard -->
+        <section id="view-about" class="view hidden">
           <div class="view-header">
-            <h2>👨‍💻 Architecture & Credits</h2>
-            <p class="view-sub">NASA NEO Universe is engineered and developed by Subrat Mishra. Click any module in the pipeline below for technical details.</p>
+            <h2>👨‍💻 System Architecture & Credits</h2>
+            <p class="view-sub">NASA NEO Universe is a production-grade MLOps ecosystem. Explore the mission parameters below.</p>
           </div>
 
-          <div id="mlops-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
-            <div class="mlops-card">
-              <h3>System Architect</h3>
-              <div style="margin-top:16px; font-size: 1.2rem; color: #fff; font-weight: 600;">Subrat Mishra</div>
-              <p style="color:var(--muted); margin-top:8px; line-height: 1.5;">Architected the end-to-end data pipeline, machine learning models, FastAPI backend, and high-performance WebGL 3D Visualization.</p>
-              <div style="margin-top:24px">
-                <a href="https://mishra-subrat.framer.website/" class="btn-primary" target="_blank" style="text-decoration:none; display:flex; justify-content:center; align-items:center;">View Portfolio</a>
+          <div class="about-dashboard">
+            <!-- Sidebar: Architect Hero -->
+            <div class="about-hero">
+              <div class="hero-avatar-wrap">
+                <img src="architect_avatar.png" alt="Subrat Mishra" class="hero-avatar">
+              </div>
+              <h1 class="hero-name">Subrat Mishra</h1>
+              <div class="hero-role">System Architect</div>
+              <p class="hero-bio">
+                Specialized in architecting high-concurrency data pipelines, 3D WebGL visualizations, and automated MLOps lifecycles. 
+                Designed the end-to-end "Astroniverse" ecosystem to bridge NASA orbital data with real-time hazard detection.
+              </p>
+              <div style="width:100%; margin-top:auto;">
+                <a href="https://mishra-subrat.framer.website/" target="_blank" class="btn-primary" style="display:block; text-decoration:none;">View Portfolio</a>
               </div>
             </div>
-            <div class="mlops-card">
-              <h3>Open Source & Infrastructure</h3>
-              <p style="color:var(--muted); margin-top:8px; line-height: 1.5; margin-bottom: 24px;">Access the complete source code, training notebooks, and dataset repositories.</p>
-              <div style="display:flex; flex-direction:column; gap:12px;">
-                <a href="https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection" class="btn-secondary" target="_blank" style="text-align:center; text-decoration:none">🐙 GitHub Repository</a>
-                <a href="https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection" class="btn-secondary" target="_blank" style="text-align:center; text-decoration:none">🔗 DAGsHub Workspace</a>
-              </div>
-            </div>
-            <div class="mlops-card">
-              <h3>MLOps & Monitoring</h3>
-              <p style="color:var(--muted); margin-top:8px; line-height: 1.5; margin-bottom: 24px;">Real-time metrics tracking for data drift, continuous integration, and pipeline health.</p>
-              <div style="display:flex; flex-direction:column; gap:12px;">
-                <a href="https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection.mlflow/" class="btn-secondary" target="_blank" style="text-align:center; text-decoration:none">📈 MLflow Server</a>
-                <a href="https://subrat1920.grafana.net/public-dashboards/888774ac60ce422fb3f0abb526512867" class="btn-secondary" target="_blank" style="text-align:center; text-decoration:none">📊 Grafana Dashboards</a>
-              </div>
-            </div>
-            <div class="mlops-card">
-              <h3>License & Credibility</h3>
-              <p style="color:var(--muted); margin-top:8px; line-height: 1.5; margin-bottom: 24px;">This project strictly utilizes public API protocols for dataset acquisition.</p>
-              <div style="display:flex; flex-direction:column; gap:8px">
-                <div style="padding:12px; background:var(--surface2); border-radius:6px">
-                  <span style="color:var(--muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; display:block">Primary Data Source</span>
-                  <span style="color:#fff; font-weight:500;">NASA JPL Near-Earth Object API</span>
-                </div>
-                <div style="padding:12px; background:var(--surface2); border-radius:6px">
-                  <span style="color:var(--muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; display:block">Software License</span>
-                  <span style="color:#fff; font-weight:500;">MIT License</span>
+
+            <!-- Main Content: Dashboard Grid -->
+            <div class="about-main">
+              <!-- Tech Stack Card -->
+              <div class="about-section-card">
+                <h3>Core Technology Stack</h3>
+                <div class="tech-row">
+                  <span class="tech-chip">Python 3.12</span>
+                  <span class="tech-chip">FastAPI</span>
+                  <span class="tech-chip">PostgreSQL (Neon)</span>
+                  <span class="tech-chip">Three.js</span>
+                  <span class="tech-chip">GLSL Shaders</span>
+                  <span class="tech-chip">GSAP</span>
+                  <span class="tech-chip">MLflow</span>
+                  <span class="tech-chip">Optuna</span>
+                  <span class="tech-chip">DVC</span>
+                  <span class="tech-chip">GitHub Actions</span>
+                  <span class="tech-chip">Docker</span>
                 </div>
               </div>
+
+              <!-- DevOps & Infrastructure Grid -->
+              <div class="about-section-card">
+                <h3>Mission Infrastructure</h3>
+                <div class="link-grid">
+                  <a href="https://github.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection" target="_blank" class="link-tile">
+                    <span class="lt-title">🐙 GitHub Repository</span>
+                    <span class="lt-desc">Complete source code, CI/CD workflows, and production docker-compose configurations.</span>
+                    <span class="lt-action">View Source →</span>
+                  </a>
+                  <a href="https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection" target="_blank" class="link-tile">
+                    <span class="lt-title">🔗 DAGsHub Workspace</span>
+                    <span class="lt-desc">DVC-managed data versioning, pipeline lineage, and integrated experiment tracking.</span>
+                    <span class="lt-action">Open Workspace →</span>
+                  </a>
+                  <a href="https://dagshub.com/Subrat1920/Nasa-Near-Earth-Hazardous-Detection.mlflow/" target="_blank" class="link-tile">
+                    <span class="lt-title">📈 MLflow Server</span>
+                    <span class="lt-desc">Real-time model training logs, hyperparameter comparisons, and model registry artifacts.</span>
+                    <span class="lt-action">Inspect Models →</span>
+                  </a>
+                  <a href="https://subrat1920.grafana.net/public-dashboards/888774ac60ce422fb3f0abb526512867" target="_blank" class="link-tile">
+                    <span class="lt-title">📊 Grafana Dashboards</span>
+                    <span class="lt-desc">External observability for system health, database load, and prediction drift metrics.</span>
+                    <span class="lt-action">Live Monitor →</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Project Metadata -->
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                <div class="about-section-card" style="padding:16px;">
+                  <span style="color:var(--muted); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; display:block">Primary Data Source</span>
+                  <span style="color:#fff; font-weight:500; font-size:0.85rem;">NASA JPL CNEOS API</span>
+                </div>
+                <div class="about-section-card" style="padding:16px;">
+                  <span style="color:var(--muted); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; display:block">Software License</span>
+                  <span style="color:#fff; font-weight:500; font-size:0.85rem;">MIT Open Source</span>
+                </div>
+              </div>
+
             </div>
-          </div><!-- /mlops-grid -->
+          </div>
+        </section>
         </section>
 
         <!-- Technical Architecture View -->
@@ -353,11 +392,6 @@
               </button>
             </div>
           </div>
-        </section>
-
-        <!-- About View -->
-        <section id="view-about" class="view hidden">
-          <!-- About content still ends here correctly -->
         </section>
 
       </main>

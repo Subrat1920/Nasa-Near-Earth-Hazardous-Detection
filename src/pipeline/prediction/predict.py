@@ -91,32 +91,40 @@ class Predicting:
         return data
 
     def transforming_data(self, data):
-        id_series = data['id']
-        print(f"Number of records: {len(id_series)}")
+        try:
+            from src.custom.data_transformation import DataTransformation
+            dt = DataTransformation()
 
-        data['diameter_range'] = data['max_diameter_km'] - data['min_diameter_km']
-        df = data.drop(columns=self.drop_columns, axis=1)
-        print(f"Shape after dropping columns: {df.shape}")
+            # 1. Hybrid Feature Engineering (Same as Training)
+            df = dt.gathering_required_data(data)
+            id_series = data['id']  # Keep original ID
+            
+            # 2. Skewness Correction (Consistent with Training)
+            df['diameter_range'] = np.log(df['diameter_range'])
+            df['relative_velocity_kps'] = np.log(df['relative_velocity_kps'])
+            df['miss_distance_km'] = np.sqrt(df['miss_distance_km'])
+            
+            # 3. Handle NaNs/Inf (Same as Training)
+            df.replace([np.inf, -np.inf], np.nan, inplace=True)
+            df.fillna(df.median(), inplace=True)
 
-        x = df[self.features].copy()
-        y = df[self.target].copy()
-        print(f"Feature matrix shape: {x.shape}, Target vector shape: {y.shape}")
+            x = df[self.features].copy()
+            y = df[self.target].copy()
 
-        # Transform skewed features
-        x['diameter_range'] = np.log(x['diameter_range'])
-        x['relative_velocity_kps'] = np.log(x['relative_velocity_kps'])
-        x['miss_distance_km'] = np.sqrt(x['miss_distance_km'])
-        print("Skewness corrected for features")
-
-        x_encoded = self.preprocessor.transform(x)
-        print(f"Encoded features shape: {x_encoded.shape}")
-
-        return id_series, y, x_encoded
+            x_encoded = self.preprocessor.transform(x)
+            return id_series, y, x_encoded
+            
+        except Exception as e:
+            from src.exception import CustomException
+            import sys
+            raise CustomException(e, sys)
 
     def predict_data(self, id_series, y, x_encoded):
         # Model prediction
         encoded_prediction = self.best_model.predict(x_encoded)
         prediction = self.label_encoder.inverse_transform(encoded_prediction)
+        
+        # Consistent with StackingClassifier/Hybrid prediction
         pred_proba = self.best_model.predict_proba(x_encoded)
         prob_of_false = pred_proba[:, 0]
         prob_of_true = pred_proba[:, 1]

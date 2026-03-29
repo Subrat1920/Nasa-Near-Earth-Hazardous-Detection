@@ -23,19 +23,19 @@ const NODE_DATA = [
   { 
     id: 'ingestion', label: 'Data Ingestion', pos: [-6, 0, 0], color: 0x00d4ff,
     subs: [
-      { id: 'api_extraction', label: 'API Extraction', work: 'Extracts real-time orbital definitions from NASA JPL Remote API.', tech: 'NASA JPL API' },
+      { id: 'api_extraction', label: 'API Extraction', work: 'Extracts batch orbital definitions from NASA NeoWs Remote API.', tech: 'NASA NeoWS API' },
       { id: 'data_storage', label: 'Data Storage', work: 'Maps raw NASA payloads into localized database structures.', tech: 'Python/SQL' },
-      { id: 'ingestion_reg', label: 'Ingestion', work: 'Structures incoming JSON into flattened CSV schemas and registers transformations with DVC.', tech: 'DVC' },
+      { id: 'ingestion_reg', label: 'Ingestion', work: 'Structures incoming JSON into flattened CSV schemas and registers transformations.', tech: 'Python/ SQL' },
       { id: 'transformation', label: 'Transformation', work: 'Cleanses data, normalizes distances, and applies feature engineering for ML.', tech: 'Pandas/NumPy' }
     ]
   },
   { 
     id: 'ml', label: 'ML Pipeline', pos: [-2, 0, 0], color: 0x9b59b6,
     subs: [
-      { id: 'model_training', label: 'Model Training', work: 'Trains XGBoost and Random Forest architectures to identify hazards.', tech: 'Scikit-Learn/XGBoost' },
+      { id: 'model_training', label: 'Model Training', work: 'Trains different independent and Stacked Classifier Model to identify hazards and logs each model performance in MLFlow model Registry with DagsHub for experiment Tracking.', tech: 'Scikit-Learn/XGBoost/LightGBM/Catboost/StackedModels and MLFow' },
       { id: 'batch_prediction', label: 'Batch Prediction', work: 'Executes unlabelled batch testing generating deterministic risk probabilities.', tech: 'Python' },
-      { id: 'data_drift', label: 'Drift Detection', work: 'Uses PSI equations to monitor model stability against historical signatures.', tech: 'Evidently AI / MLflow' },
-      { id: 'grafana', label: 'Grafana Monitor', work: 'Aggregates metrics and system loads onto remote dashboard nodes.', tech: 'Grafana/Prometheus' }
+      { id: 'data_drift', label: 'Drift Detection', work: 'Uses PSI equations to monitor model stability against historical signatures.', tech: 'PSI (Population Stability Index and Chi-Square Test)' },
+      { id: 'grafana', label: 'Grafana Monitor', work: 'Aggregates metrics and system loads onto remote dashboard nodes.', tech: 'Grafana' }
     ]
   },
   { 

@@ -7,10 +7,12 @@ import pandas as pd
 from datetime import datetime
 import mlflow
 from mlflow.models import infer_signature
-from sklearn.model_selection import RandomizedSearchCV
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, cross_val_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_score, f1_score
 from catboost import CatBoostClassifier
+from xgboost import XGBClassifier
 import dagshub
+import optuna
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from src.constants.config_entity import ModelTrainerConfig
@@ -76,6 +78,37 @@ class ModelTrainer:
         self.hyp_parameter_scores = config.parameter_scoring
         self.engine = create_engine(DATABASE_URL)
 
+    def cb_objective(trial, X_res, y_res):
+        try:
+            params = {
+                'iterations': trial.suggest_int('iterations', 100, 500),
+                'depth': trial.suggest_int('depth', 4, 10),
+                'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.2, log=True),
+                'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 1e-2, 10.0, log=True),
+                'verbose': 0, 'random_seed': 42
+            }
+
+            model = CatBoostClassifier(**params)
+            score = cross_val_score(model, X=X_res, y=y_res, cv=3, scoring='accuracy').mean()
+            return score
+
+        except Exception as e:
+            logging.error("Got an errr while ")
+    
+    def xgb_objective(trial, X_res, y_res):
+        try:
+            params = {
+                'n_estimators': trial.suggest_int('n_estimators', 100, 500),
+                'max_depth': trial.suggest_int('max_depth', 4, 10),
+                'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.2, log=True),
+                'random_state': 42
+            }
+            model = XGBClassifier(**params)
+            score = cross_val_score(model, X_res, y_res, cv=3, scoring='accuracy').mean()
+            return score
+        except Exception as e:
+            logging.error("Got an error while creating obejective for XGBoost Classifier")
+
     def model_training_with_mlflow(self, x_train, y_train, x_test, y_test):
         try:
             mlflow.set_experiment(experiment_name=f"NASA NEO Training on {ml_run_name}")
@@ -91,63 +124,55 @@ class ModelTrainer:
                 "artifact_uri": None,
             }
 
-            for model_name, model, param_grid in self.models_with_params:
-                search = RandomizedSearchCV(
-                    estimator=model,
-                    param_distributions=param_grid,
-                    scoring=self.hyp_parameter_scores,
-                    refit='average_precision',
-                    n_jobs=-1,
-                    verbose=1,
-                    n_iter=10,
-                    random_state=42,
-                )
-                search.fit(x_train, y_train)
+            # 1. Optuna Tuning for CatBoost
+            logging.info("Starting Optuna Tuning for CatBoost...")
+            cb_study = optuna.create_study(direction='maximize')
+            cb_study.optimize(lambda trial: ModelTrainer.cb_objective(trial, x_train, y_train), n_trials=10)
+            cb_best_params = cb_study.best_params
+            logging.info(f"Best CatBoost Params: {cb_best_params}")
 
-                tuned_model = search.best_estimator_
-                tuned_params = search.best_params_
-                y_pred_test = tuned_model.predict(x_test)
-                acc, prec, recall, f1 = get_mlflow_metrics(y_test, y_pred_test)
+            # 2. Optuna Tuning for XGBoost
+            logging.info("Starting Optuna Tuning for XGBoost...")
+            xgb_study = optuna.create_study(direction='maximize')
+            xgb_study.optimize(lambda trial: ModelTrainer.xgb_objective(trial, x_train, y_train), n_trials=10)
+            xgb_best_params = xgb_study.best_params
+            logging.info(f"Best XGBoost Params: {xgb_best_params}")
 
-                # Log all tuned models to MLflow
-                with mlflow.start_run(run_name=f"Tuned | {model_name}") as run:
-                    mlflow.log_params(tuned_params)
-                    mlflow.log_metrics({"accuracy": acc, "precision": prec, "recall": recall, "f1_score": f1})
+            # 3. Create Stacking Classifier
+            logging.info("Creating Hybrid Stacking Classifier...")
+            from sklearn.ensemble import StackingClassifier
+            from sklearn.ensemble import RandomForestClassifier
 
-                    with tempfile.TemporaryDirectory() as tmpdir:
-                        model_file = os.path.join(tmpdir, f"{model_name.replace(' ', '_')}.model")
-                        _save_model_to_file(tuned_model, model_file)
-                        mlflow.log_artifact(model_file, artifact_path=f"models/{model_name.replace(' ', '_')}")
+            estimators = [
+                ('cat', CatBoostClassifier(**cb_best_params, verbose=0, random_seed=42)),
+                ('xgb', XGBClassifier(**xgb_best_params, random_state=42))
+            ]
+            
+            hybrid_stack = StackingClassifier(
+                estimators=estimators,
+                final_estimator=RandomForestClassifier(n_estimators=100, random_state=42),
+                cv=5,
+                n_jobs=-1
+            )
 
-                        try:
-                            input_example = np.array(x_train[:5])
-                            input_path = os.path.join(tmpdir, "input_example.npy")
-                            np.save(input_path, input_example)
-                            mlflow.log_artifact(input_path, artifact_path=f"models/{model_name.replace(' ', '_')}")
-                        except Exception:
-                            pass
+            # 4. Train Hybrid Model
+            logging.info("Training Hybrid Stacked Model...")
+            hybrid_stack.fit(x_train, y_train)
+            
+            y_pred_test = hybrid_stack.predict(x_test)
+            acc, prec, recall, f1 = get_mlflow_metrics(y_test, y_pred_test)
 
-                        try:
-                            sig = infer_signature(x_train[:50], tuned_model.predict(x_train[:50]))
-                            sig_path = os.path.join(tmpdir, "signature.txt")
-                            with open(sig_path, "w") as f:
-                                f.write(str(sig))
-                            mlflow.log_artifact(sig_path, artifact_path=f"models/{model_name.replace(' ', '_')}")
-                        except Exception:
-                            pass
-
-                # Update best model by recall
-                if recall > best_model_info["recall"]:
-                    best_model_info.update({
-                        "recall": recall,
-                        "model": tuned_model,
-                        "name": model_name,
-                        "params": tuned_params,
-                        "metrics": {"accuracy": acc, "precision": prec, "recall": recall, "f1_score": f1},
-                        "y_pred_test": y_pred_test,
-                        "run_id": run.info.run_id,
-                        "artifact_uri": run.info.artifact_uri,
-                    })
+            best_model_info.update({
+                "recall": recall,
+                "model": hybrid_stack,
+                "name": "Hybrid_Stacking_Model",
+                "params": {"cb_params": cb_best_params, "xgb_params": xgb_best_params},
+                "metrics": {"accuracy": acc, "precision": prec, "recall": recall, "f1_score": f1},
+                "y_pred_test": y_pred_test,
+                # These will be set inside the mlflow run below
+                "run_id": None,
+                "artifact_uri": None,
+            })
 
             # Log best model metrics to MLflow & database
             if best_model_info["model"] is not None:

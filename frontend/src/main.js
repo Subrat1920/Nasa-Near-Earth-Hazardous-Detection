@@ -53,8 +53,11 @@ function switchView(view) {
   document.querySelectorAll('.nav-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.view === view));
 
-  document.querySelectorAll('.view').forEach(v =>
-    v.classList.toggle('active', v.id === `view-${view}`));
+  document.querySelectorAll('.view').forEach(v => {
+    const isMatch = v.id === `view-${view}`;
+    v.classList.toggle('active', isMatch);
+    v.classList.toggle('hidden', !isMatch);
+  });
 
   // ── Smart GPU Power Management ──
   // Stop background 3D engines to prevent laptop lag and black screens

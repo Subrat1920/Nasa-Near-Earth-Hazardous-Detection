@@ -9,7 +9,8 @@ from src.logging import logging
 from src.utils.utils import create_engine_for_database
 from src.exception import CustomException
 from src.constants.config_entity import DataTransformationConfig
-from imblearn.over_sampling import BorderlineSMOTE
+# from imblearn.over_sampling import BorderlineSMOTE
+from imblearn.combine import SMOTETomek
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
@@ -23,6 +24,7 @@ host = os.getenv('POSTGRES_HOST')
 port = os.getenv('POSTGRES_PORT')
 name = os.getenv('POSTGRES_DB')
 
+DENSITY = 2600
 
 class DataTransformation:
     def __init__(self):
@@ -38,7 +40,14 @@ class DataTransformation:
     def gathering_required_data(self, neo_data):
         try:
             logging.info(f'Before Required Gathering Columns: {neo_data.columns.tolist()}')
-            neo_data['diameter_range'] = neo_data['max_diameter_km'] - neo_data['min_diameter_km']
+            neo_data['diameter_range'] = (neo_data['max_diameter_km'] + neo_data['min_diameter_km']) / 2
+            density = DENSITY
+            volume_km3 = (4/3) * np.pi * (neo_data['diameter_range']/2)**3
+            neo_data['est_mass_kg'] = volume_km3 * 1e9 * density 
+            velocity_mps = neo_data['relative_velocity_kps'] * 1000
+            neo_data['est_kinetic_energy_j'] = 0.5 * neo_data['est_mass_kg'] * (velocity_mps**2)
+            neo_data['inv_miss_dist'] = 1 / (neo_data['miss_distance_km'] + 1e-5)
+            neo_data['impact_risk_index'] = np.log1p(neo_data['est_kinetic_energy_j'] * neo_data['inv_miss_dist'])
             df = neo_data.drop(columns=self.drop_features, axis=1)
             logging.info(f'After Required Gathering Columns: {df.columns.tolist()}')
             return df
@@ -49,6 +58,12 @@ class DataTransformation:
         try:
             x = req_data[self.features]
             y = req_data[self.target]
+
+            logging.info(f"We have X columns with {x.columns}")
+
+            logging.info("Performing Data Cleansing")
+            x.replace([np.inf, -np.inf], np.nan, inplace=True)
+            x.fillna(x.median(), inplace=True)
 
             x['diameter_range'] = np.log(x['diameter_range'])
             x['relative_velocity_kps'] = np.log(x['relative_velocity_kps'])
@@ -119,7 +134,7 @@ class DataTransformation:
 
     def treating_imbalanced_data(self, x_train_encoded, y_train_encoded):
         try:
-            smote = BorderlineSMOTE()
+            smote = SMOTETomek(random_state=42)
             x_resample, y_resample = smote.fit_resample(x_train_encoded, y_train_encoded)
             return x_resample, y_resample
         except Exception as e:

@@ -41,6 +41,7 @@ body {
 }
 button { cursor: pointer; border: none; background: none; color: inherit; font: inherit; }
 a { color: var(--accent); text-decoration: none; }
+.hidden { display: none !important; }
 
 /* ══════════════════════════════════════════════════════════
    LOADING SCREEN
@@ -468,11 +469,13 @@ a { color: var(--accent); text-decoration: none; }
   transform: translate(-50%, calc(-100% - 20px)) scale(0.9);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  pointer-events: none;
 }
 
 .arch-bubble.active {
   opacity: 1;
   transform: translate(-50%, calc(-100% - 20px)) scale(1);
+  pointer-events: auto;
 }
 
 .arch-bubble::after {
@@ -619,4 +622,72 @@ a { color: var(--accent); text-decoration: none; }
 ══════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+/* ══════════════════════════════════════════════════════════
+   ABOUT DASHBOARD REDESIGN
+══════════════════════════════════════════════════════════ */
+.about-dashboard {
+  display: grid; grid-template-columns: 320px 1fr; gap: 24px;
+  padding: 0 32px 32px; height: calc(100vh - var(--header-h) - 100px);
+}
+.about-hero {
+  background: var(--glass); backdrop-filter: blur(20px);
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  padding: 32px 24px; display: flex; flex-direction: column; align-items: center;
+  text-align: center; height: 100%;
+}
+.hero-avatar-wrap {
+  width: 140px; height: 140px; border-radius: 50%;
+  padding: 4px; background: linear-gradient(135deg, var(--accent), var(--both));
+  margin-bottom: 24px; position: relative;
+}
+.hero-avatar-wrap::after {
+  content: ""; position: absolute; inset: -8px; border-radius: 50%;
+  border: 1px solid var(--border); animation: rotate 10s linear infinite;
+}
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.hero-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.hero-name { font-family: var(--font-head); font-size: 1.4rem; color: #fff; margin-bottom: 8px; }
+.hero-role { font-size: 0.8rem; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+.hero-bio { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+
+.about-main { display: flex; flex-direction: column; gap: 24px; }
+.about-section-card {
+  background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 24px;
+}
+.about-section-card h3 {
+  font-family: var(--font-head); font-size: 0.8rem; color: var(--accent);
+  margin-bottom: 20px; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.tech-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.tech-chip {
+  padding: 6px 14px; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; font-family: var(--font-mono); font-size: 0.75rem;
+  color: var(--text); cursor: default; transition: all 0.2s;
+}
+.tech-chip:hover { border-color: var(--accent); background: var(--accent-glow); transform: translateY(-2px); }
+
+.link-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px;
+}
+.link-tile {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; display: flex; flex-direction: column; gap: 12px;
+  transition: all 0.3s; text-decoration: none;
+}
+.link-tile:hover {
+  border-color: var(--accent); background: var(--accent-glow); transform: scale(1.02);
+}
+.link-tile .lt-title { font-family: var(--font-head); font-size: 0.72rem; color: #fff; }
+.link-tile .lt-desc { font-size: 0.68rem; color: var(--muted); line-height: 1.4; }
+.link-tile .lt-action {
+  font-size: 0.65rem; color: var(--accent); font-weight: 600; text-transform: uppercase;
+  margin-top: auto; display: flex; align-items: center; gap: 6px;
+}
+
+@media (max-width: 1100px) {
+  .about-dashboard { grid-template-columns: 1fr; height: auto; }
+  .about-hero { height: auto; }
+}
