@@ -7,8 +7,8 @@ import pandas as pd
 from datetime import datetime
 import mlflow
 from mlflow.models import infer_signature
-from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, cross_val_score
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_score, f1_score
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import classification_report, confusion_matrix
 from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 import dagshub
@@ -93,8 +93,10 @@ class ModelTrainer:
             return score
 
         except Exception as e:
-            logging.error("Got an errr while ")
-    
+            logging.error(f"Got an error while")
+            raise CustomException(e, sys)
+
+
     def xgb_objective(trial, X_res, y_res):
         try:
             params = {
@@ -107,7 +109,8 @@ class ModelTrainer:
             score = cross_val_score(model, X_res, y_res, cv=3, scoring='accuracy').mean()
             return score
         except Exception as e:
-            logging.error("Got an error while creating obejective for XGBoost Classifier")
+            logging.error(f"Got an error while creating obejective for XGBoost Classifier")
+            raise CustomException(e, sys)
 
     def model_training_with_mlflow(self, x_train, y_train, x_test, y_test):
         try:
@@ -147,7 +150,7 @@ class ModelTrainer:
                 ('cat', CatBoostClassifier(**cb_best_params, verbose=0, random_seed=42)),
                 ('xgb', XGBClassifier(**xgb_best_params, random_state=42))
             ]
-            
+
             hybrid_stack = StackingClassifier(
                 estimators=estimators,
                 final_estimator=RandomForestClassifier(n_estimators=100, random_state=42),
@@ -158,7 +161,7 @@ class ModelTrainer:
             # 4. Train Hybrid Model
             logging.info("Training Hybrid Stacked Model...")
             hybrid_stack.fit(x_train, y_train)
-            
+
             y_pred_test = hybrid_stack.predict(x_test)
             acc, prec, recall, f1 = get_mlflow_metrics(y_test, y_pred_test)
 

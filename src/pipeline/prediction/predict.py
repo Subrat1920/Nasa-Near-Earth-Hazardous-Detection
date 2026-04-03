@@ -1,14 +1,11 @@
 import os
 from datetime import datetime, timedelta
-
 import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
-
 import mlflow
 import dagshub
-
 from src.utils.utils import extract_best_model, fetch_data, load_artifact_from_db
 from src.constants.config_entity import PredictionConfig, DataTransformationConfig
 
@@ -98,12 +95,12 @@ class Predicting:
             # 1. Hybrid Feature Engineering (Same as Training)
             df = dt.gathering_required_data(data)
             id_series = data['id']  # Keep original ID
-            
+
             # 2. Skewness Correction (Consistent with Training)
             df['diameter_range'] = np.log(df['diameter_range'])
             df['relative_velocity_kps'] = np.log(df['relative_velocity_kps'])
             df['miss_distance_km'] = np.sqrt(df['miss_distance_km'])
-            
+
             # 3. Handle NaNs/Inf (Same as Training)
             df.replace([np.inf, -np.inf], np.nan, inplace=True)
             df.fillna(df.median(), inplace=True)
@@ -113,7 +110,7 @@ class Predicting:
 
             x_encoded = self.preprocessor.transform(x)
             return id_series, y, x_encoded
-            
+
         except Exception as e:
             from src.exception import CustomException
             import sys
@@ -123,7 +120,7 @@ class Predicting:
         # Model prediction
         encoded_prediction = self.best_model.predict(x_encoded)
         prediction = self.label_encoder.inverse_transform(encoded_prediction)
-        
+
         # Consistent with StackingClassifier/Hybrid prediction
         pred_proba = self.best_model.predict_proba(x_encoded)
         prob_of_false = pred_proba[:, 0]

@@ -26,6 +26,7 @@ name = os.getenv('POSTGRES_DB')
 
 DENSITY = 2600
 
+
 class DataTransformation:
     def __init__(self):
         config = DataTransformationConfig()
@@ -43,7 +44,7 @@ class DataTransformation:
             neo_data['diameter_range'] = (neo_data['max_diameter_km'] + neo_data['min_diameter_km']) / 2
             density = DENSITY
             volume_km3 = (4/3) * np.pi * (neo_data['diameter_range']/2)**3
-            neo_data['est_mass_kg'] = volume_km3 * 1e9 * density 
+            neo_data['est_mass_kg'] = volume_km3 * 1e9 * density
             velocity_mps = neo_data['relative_velocity_kps'] * 1000
             neo_data['est_kinetic_energy_j'] = 0.5 * neo_data['est_mass_kg'] * (velocity_mps**2)
             neo_data['inv_miss_dist'] = 1 / (neo_data['miss_distance_km'] + 1e-5)
