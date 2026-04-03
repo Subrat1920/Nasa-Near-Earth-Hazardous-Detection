@@ -93,9 +93,8 @@ class ModelTrainer:
             return score
 
         except Exception as e:
-            logging.error(f"Got an error while")
+            logging.error("Got an error while")
             raise CustomException(e, sys)
-
 
     def xgb_objective(trial, X_res, y_res):
         try:
@@ -109,7 +108,7 @@ class ModelTrainer:
             score = cross_val_score(model, X_res, y_res, cv=3, scoring='accuracy').mean()
             return score
         except Exception as e:
-            logging.error(f"Got an error while creating obejective for XGBoost Classifier")
+            logging.error("Got an error while creating obejective for XGBoost Classifier")
             raise CustomException(e, sys)
 
     def model_training_with_mlflow(self, x_train, y_train, x_test, y_test):
